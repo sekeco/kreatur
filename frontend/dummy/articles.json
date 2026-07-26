@@ -1,0 +1,314 @@
+[
+  {
+    "id": "ART-001",
+    "title": "Mengenal Lebih Dalam Ekosistem Startup Digital di Indonesia",
+    "slug": "mengenal-lebih-dalam-ekosistem-startup-digital-di-indonesia",
+    "excerpt": "Perkembangan startup digital di Indonesia menunjukkan tren positif dengan munculnya berbagai unicorn baru di sektor ekonomi digital.",
+    "content": "<p>Lorem ipsum content...</p>",
+    "status": "PUBLISHED",
+    "category": "Teknologi",
+    "author": {
+      "name": "Budi Santoso",
+      "avatar": ""
+    },
+    "reviewer": {
+      "name": "Siti Rahmawati",
+      "avatar": ""
+    },
+    "wordCount": 2450,
+    "honor": 150000,
+    "createdAt": "2026-07-15T08:30:00Z",
+    "updatedAt": "2026-07-20T14:22:00Z",
+    "publishedAt": "2026-07-20T14:22:00Z"
+  },
+  {
+    "id": "ART-002",
+    "title": "Panduan Lengkap Content Marketing untuk Bisnis UKM",
+    "slug": "panduan-lengkap-content-marketing-untuk-bisnis-ukm",
+    "excerpt": "Strategi content marketing yang efektif dapat membantu UKM bersaing di era digital tanpa memerlukan budget besar.",
+    "content": "<p>Lorem ipsum content...</p>",
+    "status": "PENDING_REVIEW",
+    "category": "Pemasaran",
+    "author": {
+      "name": "Ayu Lestari",
+      "avatar": ""
+    },
+    "reviewer": null,
+    "wordCount": 1800,
+    "honor": 120000,
+    "createdAt": "2026-07-18T10:15:00Z",
+    "updatedAt": "2026-07-19T16:45:00Z",
+    "publishedAt": null
+  },
+  {
+    "id": "ART-003",
+    "title": "Review Sony WH-1000XM6: Headphone Noise Cancelling Terbaru",
+    "slug": "review-sony-wh-1000xm6-headphone-noise-cancelling-terbaru",
+    "excerpt": "Setelah sukses dengan seri sebelumnya, Sony kembali merilis flagship headphone dengan peningkatan signifikan.",
+    "content": "<p>Lorem ipsum content...</p>",
+    "status": "DRAFT",
+    "category": "Gadget",
+    "author": {
+      "name": "Budi Santoso",
+      "avatar": ""
+    },
+    "reviewer": null,
+    "wordCount": 920,
+    "honor": 100000,
+    "createdAt": "2026-07-21T06:00:00Z",
+    "updatedAt": "2026-07-21T06:00:00Z",
+    "publishedAt": null
+  },
+  {
+    "id": "ART-004",
+    "title": "Cara Efektif Mengelola Tim Remote di Era Hybrid Working",
+    "slug": "cara-efektif-mengelola-tim-remote-di-era-hybrid-working",
+    "excerpt": "Manajemen tim jarak jauh membutuhkan pendekatan berbeda. Simak tips dan tools terbaik untuk produktivitas tim.",
+    "content": "<p>Lorem ipsum content...</p>",
+    "status": "REVISION_REQUESTED",
+    "category": "Manajemen",
+    "author": {
+      "name": "Dimas Ardianto",
+      "avatar": ""
+    },
+    "reviewer": {
+      "name": "Siti Rahmawati",
+      "avatar": ""
+    },
+    "wordCount": 2100,
+    "honor": 135000,
+    "createdAt": "2026-07-12T09:00:00Z",
+    "updatedAt": "2026-07-19T11:30:00Z",
+    "publishedAt": null
+  },
+  {
+    "id": "ART-005",
+    "title": "5 Framework CSS Terpopuler yang Wajib Diketahui Developer 2026",
+    "slug": "5-framework-css-terpopuler-yang-wajib-diketahui-developer-2026",
+    "excerpt": "Dunia front-end development terus berkembang. Berikut framework CSS yang perlu kamu kuasai tahun ini.",
+    "content": "<p>Lorem ipsum content...</p>",
+    "status": "APPROVED",
+    "category": "Teknologi",
+    "author": {
+      "name": "Ayu Lestari",
+      "avatar": ""
+    },
+    "reviewer": {
+      "name": "Budi Santoso",
+      "avatar": ""
+    },
+    "wordCount": 1650,
+    "honor": 120000,
+    "createdAt": "2026-07-10T14:20:00Z",
+    "updatedAt": "2026-07-18T09:00:00Z",
+    "publishedAt": null
+  },
+  {
+    "id": "ART-006",
+    "title": "Analisis Dampak Kebijakan Ekonomi Terbaru terhadap Sektor Ritel",
+    "slug": "analisis-dampak-kebijakan-ekonomi-terbaru-terhadap-sektor-ritel",
+    "excerpt": "Kebijakan ekonomi yang baru diumumkan pemerintah diprediksi akan mempengaruhi sektor ritel secara signifikan.",
+    "content": "<p>Lorem ipsum content...</p>",
+    "status": "DRAFT",
+    "category": "Ekonomi",
+    "author": {
+      "name": "Dimas Ardianto",
+      "avatar": ""
+    },
+    "reviewer": null,
+    "wordCount": 3100,
+    "honor": 200000,
+    "createdAt": "2026-07-20T07:45:00Z",
+    "updatedAt": "2026-07-20T07:45:00Z",
+    "publishedAt": null
+  },
+  {
+    "id": "ART-007",
+    "title": "Tips Memilih Kamera Mirrorless untuk Pemula",
+    "slug": "tips-memilih-kamera-mirrorless-untuk-pemula",
+    "excerpt": "Bingung memilih kamera mirrorless pertama? Simak panduan lengkap untuk pemula ini sebelum membeli.",
+    "content": "<p>Lorem ipsum content...</p>",
+    "status": "REJECTED",
+    "category": "Gadget",
+    "author": {
+      "name": "Budi Santoso",
+      "avatar": ""
+    },
+    "reviewer": {
+      "name": "Siti Rahmawati",
+      "avatar": ""
+    },
+    "wordCount": 1400,
+    "honor": 110000,
+    "createdAt": "2026-07-08T11:30:00Z",
+    "updatedAt": "2026-07-14T15:20:00Z",
+    "publishedAt": null
+  },
+  {
+    "id": "ART-008",
+    "title": "Transformasi Digital di Sektor Pendidikan: Peluang dan Tantangan",
+    "slug": "transformasi-digital-di-sektor-pendidikan-peluang-dan-tantangan",
+    "excerpt": "Digitalisasi pendidikan membuka peluang baru sekaligus tantangan yang perlu dihadapi para pendidik.",
+    "content": "<p>Lorem ipsum content...</p>",
+    "status": "PENDING_REVIEW",
+    "category": "Pendidikan",
+    "author": {
+      "name": "Ayu Lestari",
+      "avatar": ""
+    },
+    "reviewer": null,
+    "wordCount": 2750,
+    "honor": 160000,
+    "createdAt": "2026-07-17T13:10:00Z",
+    "updatedAt": "2026-07-19T08:30:00Z",
+    "publishedAt": null
+  },
+  {
+    "id": "ART-009",
+    "title": "Sejarah dan Evolsi Sistem Operasi Linux",
+    "slug": "sejarah-dan-evolusi-sistem-operasi-linux",
+    "excerpt": "Dari proyek mahasiswa hingga menjadi tulang punggung internet modern, Linux telah menempuh perjalanan panjang.",
+    "content": "<p>Lorem ipsum content...</p>",
+    "status": "PUBLISHED",
+    "category": "Teknologi",
+    "author": {
+      "name": "Dimas Ardianto",
+      "avatar": ""
+    },
+    "reviewer": {
+      "name": "Budi Santoso",
+      "avatar": ""
+    },
+    "wordCount": 3200,
+    "honor": 180000,
+    "createdAt": "2026-07-01T09:00:00Z",
+    "updatedAt": "2026-07-05T16:40:00Z",
+    "publishedAt": "2026-07-05T16:40:00Z"
+  },
+  {
+    "id": "ART-010",
+    "title": "Panduan Memulai Investasi Saham bagi Pemula",
+    "slug": "panduan-memulai-investasi-saham-bagi-pemula",
+    "excerpt": "Investasi saham tidak serumit yang dibayangkan. Pelajari langkah-langkah dasar untuk memulai perjalanan investasimu.",
+    "content": "<p>Lorem ipsum content...</p>",
+    "status": "DRAFT",
+    "category": "Keuangan",
+    "author": {
+      "name": "Budi Santoso",
+      "avatar": ""
+    },
+    "reviewer": null,
+    "wordCount": 750,
+    "honor": 90000,
+    "createdAt": "2026-07-21T05:30:00Z",
+    "updatedAt": "2026-07-21T05:30:00Z",
+    "publishedAt": null
+  },
+  {
+    "id": "ART-011",
+    "title": "Membangun Brand Personal di LinkedIn untuk Profesional Muda",
+    "slug": "membangun-brand-personal-di-linkedin-untuk-profesional-muda",
+    "excerpt": "LinkedIn bukan sekadar CV digital. Manfaatkan platform ini untuk membangun personal branding yang kuat.",
+    "content": "<p>Lorem ipsum content...</p>",
+    "status": "APPROVED",
+    "category": "Karir",
+    "author": {
+      "name": "Ayu Lestari",
+      "avatar": ""
+    },
+    "reviewer": {
+      "name": "Siti Rahmawati",
+      "avatar": ""
+    },
+    "wordCount": 1900,
+    "honor": 130000,
+    "createdAt": "2026-07-14T10:00:00Z",
+    "updatedAt": "2026-07-18T14:15:00Z",
+    "publishedAt": null
+  },
+  {
+    "id": "ART-012",
+    "title": "Inovasi Teknologi Blockchain di Luar Cryptocurrency",
+    "slug": "inovasi-teknologi-blockchain-di-luar-cryptocurrency",
+    "excerpt": "Blockchain memiliki potensi jauh melampaui mata uang kripto. Simak berbagai implementasi inovatifnya.",
+    "content": "<p>Lorem ipsum content...</p>",
+    "status": "PUBLISHED",
+    "category": "Teknologi",
+    "author": {
+      "name": "Dimas Ardianto",
+      "avatar": ""
+    },
+    "reviewer": {
+      "name": "Budi Santoso",
+      "avatar": ""
+    },
+    "wordCount": 2800,
+    "honor": 170000,
+    "createdAt": "2026-06-28T08:00:00Z",
+    "updatedAt": "2026-07-02T10:30:00Z",
+    "publishedAt": "2026-07-02T10:30:00Z"
+  },
+  {
+    "id": "ART-013",
+    "title": "Strategi Optimasi SEO untuk Website Berita Online",
+    "slug": "strategi-optimasi-seo-untuk-website-berita-online",
+    "excerpt": "SEO untuk portal berita memiliki karakteristik unik. Pelajari strategi jitu meningkatkan traffic organik.",
+    "content": "<p>Lorem ipsum content...</p>",
+    "status": "REVISION_REQUESTED",
+    "category": "Pemasaran",
+    "author": {
+      "name": "Budi Santoso",
+      "avatar": ""
+    },
+    "reviewer": {
+      "name": "Siti Rahmawati",
+      "avatar": ""
+    },
+    "wordCount": 2300,
+    "honor": 140000,
+    "createdAt": "2026-07-11T15:30:00Z",
+    "updatedAt": "2026-07-17T09:45:00Z",
+    "publishedAt": null
+  },
+  {
+    "id": "ART-014",
+    "title": "Pengaruh Media Sosial terhadap Kesehatan Mental Remaja",
+    "slug": "pengaruh-media-sosial-terhadap-kesehatan-mental-remaja",
+    "excerpt": "Penelitian terbaru mengungkap dampak signifikan penggunaan media sosial pada kesehatan mental generasi muda.",
+    "content": "<p>Lorem ipsum content...</p>",
+    "status": "REJECTED",
+    "category": "Kesehatan",
+    "author": {
+      "name": "Ayu Lestari",
+      "avatar": ""
+    },
+    "reviewer": {
+      "name": "Dimas Ardianto",
+      "avatar": ""
+    },
+    "wordCount": 1950,
+    "honor": 125000,
+    "createdAt": "2026-07-05T12:00:00Z",
+    "updatedAt": "2026-07-09T10:15:00Z",
+    "publishedAt": null
+  },
+  {
+    "id": "ART-015",
+    "title": "Tutorial Lengkap Membuat Aplikasi Mobile dengan React Native",
+    "slug": "tutorial-lengkap-membuat-aplikasi-mobile-dengan-react-native",
+    "excerpt": "Ikuti tutorial langkah demi langkah untuk membangun aplikasi mobile cross-platform menggunakan React Native.",
+    "content": "<p>Lorem ipsum content...</p>",
+    "status": "PENDING_REVIEW",
+    "category": "Teknologi",
+    "author": {
+      "name": "Dimas Ardianto",
+      "avatar": ""
+    },
+    "reviewer": null,
+    "wordCount": 4500,
+    "honor": 250000,
+    "createdAt": "2026-07-16T07:20:00Z",
+    "updatedAt": "2026-07-18T11:00:00Z",
+    "publishedAt": null
+  }
+]

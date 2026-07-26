@@ -1,0 +1,119 @@
+{
+  "version": 1,
+  "skills": {
+    "better-auth-best-practices": {
+      "source": "better-auth/skills",
+      "sourceType": "github",
+      "skillPath": "better-auth/best-practices/SKILL.md",
+      "computedHash": "61ba0ef64ed2e7c424401cc848ca33dd6d790a720c44727717dc0c5cba5fc122"
+    },
+    "better-auth-security-best-practices": {
+      "source": "better-auth/skills",
+      "sourceType": "github",
+      "skillPath": "security/SKILL.md",
+      "computedHash": "7a230edf3a24ce18162cb4379f59b6a19b8d24ca04db530609d0f15cede556dc"
+    },
+    "create-auth": {
+      "source": "better-auth/skills",
+      "sourceType": "github",
+      "skillPath": "better-auth/create-auth/SKILL.md",
+      "computedHash": "4e261efac2ae9a2321c4495c846ef97cf239818fc8bd2ab7e92ed1f9d25470f7"
+    },
+    "elysiajs": {
+      "source": "elysiajs/skills",
+      "sourceType": "github",
+      "skillPath": "elysia/SKILL.md",
+      "computedHash": "55268e69a2c766ed67e56a0db57544f60cc52dba0c7f024a974baf965e525e1b"
+    },
+    "email-and-password-best-practices": {
+      "source": "better-auth/skills",
+      "sourceType": "github",
+      "skillPath": "better-auth/emailAndPassword/SKILL.md",
+      "computedHash": "747d7f73bd9e2ec5317b8ef88dc70f97df716d00e3d02de4051feebaa48b062d"
+    },
+    "organization-best-practices": {
+      "source": "better-auth/skills",
+      "sourceType": "github",
+      "skillPath": "better-auth/organization/SKILL.md",
+      "computedHash": "27627eb3a13bd44eff3a5d890f96e7db052b623db90e01684f759abe3e7fe56b"
+    },
+    "shadcn": {
+      "source": "shadcn/ui",
+      "sourceType": "github",
+      "skillPath": "skills/shadcn/SKILL.md",
+      "computedHash": "d81caa0f86aabab65b25e302d454f23a3328760386ed9078345584c0d5c8058e"
+    },
+    "tiptap": {
+      "source": "ueberdosis/tiptap",
+      "sourceType": "github",
+      "skillPath": "skills/tiptap/SKILL.md",
+      "computedHash": "d3abb7a7e4cb1eb4064e8dcb0928771d58052c7d92e2ec3725a3a9a3c6cd338b"
+    },
+    "two-factor-authentication-best-practices": {
+      "source": "better-auth/skills",
+      "sourceType": "github",
+      "skillPath": "better-auth/twoFactor/SKILL.md",
+      "computedHash": "a6f720042e5a090909e0d519a6a50a7eb8179553cd5315f0bbad852a6d20dac8"
+    },
+    "ui-ux-pro-max": {
+      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/ui-ux-pro-max/SKILL.md",
+      "computedHash": "f0916ca326ad6dbde1d0770b46956a213406b8ea4a19ed931bb4f2dc7d04c16d"
+    },
+    "zenstack-access-control": {
+      "source": "zenstackhq/skills",
+      "sourceType": "github",
+      "skillPath": "skills/zenstack-access-control/SKILL.md",
+      "computedHash": "93ac8a3ace50f267c9e032eb1d38171d5f6e8103eedcbbe0f6abcb5037a1a6b3"
+    },
+    "zenstack-crud-server": {
+      "source": "zenstackhq/skills",
+      "sourceType": "github",
+      "skillPath": "skills/zenstack-crud-server/SKILL.md",
+      "computedHash": "9a194cded79e266bf227ec27a29925709a335e5cd74819f7f271e92673bb82f9"
+    },
+    "zenstack-db-migration": {
+      "source": "zenstackhq/skills",
+      "sourceType": "github",
+      "skillPath": "skills/zenstack-db-migration/SKILL.md",
+      "computedHash": "00f13e1bf20805a9acfa911addd404fabebf84a07c0e63e277c62372659c144b"
+    },
+    "zenstack-migrate-from-prisma": {
+      "source": "zenstackhq/skills",
+      "sourceType": "github",
+      "skillPath": "skills/zenstack-migrate-from-prisma/SKILL.md",
+      "computedHash": "e55c06a978721060d145e7eb273773dda6bdf8c6a66cb68305b246d7d04a2089"
+    },
+    "zenstack-migrate-from-v2": {
+      "source": "zenstackhq/skills",
+      "sourceType": "github",
+      "skillPath": "skills/zenstack-migrate-from-v2/SKILL.md",
+      "computedHash": "75644d893af9acaa1837dab172e9c3b5a451d23912c1bdf4c3400a2b4e207145"
+    },
+    "zenstack-plugin-dev": {
+      "source": "zenstackhq/skills",
+      "sourceType": "github",
+      "skillPath": "skills/zenstack-plugin-dev/SKILL.md",
+      "computedHash": "420f8b002a0bc46c1e265fa3e92e790e43c2d3c2cadb14823c322e0b5423302a"
+    },
+    "zenstack-project-setup": {
+      "source": "zenstackhq/skills",
+      "sourceType": "github",
+      "skillPath": "skills/zenstack-project-setup/SKILL.md",
+      "computedHash": "38f6d4cf0046a8017684bf6df827498bcada72bf2e50e6765fdfdf93146e1cb7"
+    },
+    "zenstack-querying": {
+      "source": "zenstackhq/skills",
+      "sourceType": "github",
+      "skillPath": "skills/zenstack-querying/SKILL.md",
+      "computedHash": "9aab0e4440b4bff4ea67b38933cbaafb15d4af91ae1e6d84b274c6a575d855a9"
+    },
+    "zenstack-schema-modeling": {
+      "source": "zenstackhq/skills",
+      "sourceType": "github",
+      "skillPath": "skills/zenstack-schema-modeling/SKILL.md",
+      "computedHash": "452f7b1cb000692e196ebc74ef12698dc4749153ac39a42bd36e551d35f7e309"
+    }
+  }
+}

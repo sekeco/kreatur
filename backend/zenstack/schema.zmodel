@@ -1,0 +1,339 @@
+datasource db {
+    provider = 'postgresql'
+    url = env('DATABASE_URL')
+}
+
+model Article {
+    id            String    @id @default(uuid())
+    title         String
+    slug          String
+    excerpt       String?
+    content       String?
+    status        String    @default('DRAFT')
+    wordCount     Int       @default(0) @map('word_count')
+    honor         Int       @default(0)
+    coverImageUrl String?   @map('cover_image_url')
+    categoryId    String?   @map('category_id')
+    authorId      String    @map('author_id')
+    reviewerId    String?   @map('reviewer_id')
+    workspaceId   String    @map('workspace_id')
+    createdAt     DateTime  @default(now()) @map('created_at')
+    updatedAt     DateTime  @updatedAt @map('updated_at')
+    publishedAt   DateTime? @map('published_at')
+
+    author      User             @relation("authoredArticles", fields: [authorId], references: [id])
+    reviewer    User?            @relation("reviewedArticles", fields: [reviewerId], references: [id])
+    category    Category?        @relation(fields: [categoryId], references: [id])
+    workspace   Organization     @relation(fields: [workspaceId], references: [id])
+    reviews     ArticleReview[]
+    events      ArticleEvent[]
+    payoutArticles PayoutArticle[]
+
+    @@map('articles')
+}
+
+model Category {
+    id           String   @id @default(uuid())
+    name         String
+    slug         String
+    description  String?
+    color        String   @default('#3b82f6')
+    articleCount Int      @default(0) @map('article_count')
+    wpCategoryId Int?     @map('wp_category_id')
+    workspaceId  String   @map('workspace_id')
+    createdAt    DateTime @default(now()) @map('created_at')
+
+    workspace Organization @relation(fields: [workspaceId], references: [id])
+    articles  Article[]
+
+    @@map('categories')
+}
+
+model ArticleReview {
+    id         String   @id @default(uuid())
+    articleId  String   @map('article_id')
+    reviewerId String   @map('reviewer_id')
+    score      Int?
+    notes      String?
+    decision   String
+    createdAt  DateTime @default(now()) @map('created_at')
+
+    article  Article @relation(fields: [articleId], references: [id])
+    reviewer User    @relation(fields: [reviewerId], references: [id])
+
+    @@map('article_reviews')
+}
+
+model ArticleEvent {
+    id        String   @id @default(uuid())
+    articleId String   @map('article_id')
+    userId    String   @map('user_id')
+    eventType String   @map('event_type')
+    metadata  String?
+    createdAt DateTime @default(now()) @map('created_at')
+
+    article Article @relation(fields: [articleId], references: [id])
+    user    User    @relation(fields: [userId], references: [id])
+
+    @@map('article_events')
+}
+
+model WorkspaceConnection {
+    id          String    @id @default(uuid())
+    workspaceId String    @map('workspace_id')
+    type        String    @default('wordpress')
+    config      String?
+    status      String?   @default('disconnected')
+    lastSyncAt  DateTime? @map('last_sync_at')
+    createdAt   DateTime  @default(now()) @map('created_at')
+
+    workspace Organization @relation(fields: [workspaceId], references: [id])
+
+    @@map('workspace_connections')
+}
+
+model PayoutRule {
+    id           String   @id @default(uuid())
+    workspaceId  String   @unique @map('workspace_id')
+    defaultHonor Int      @default(100000) @map('default_honor')
+    minPayout    Int      @default(50000) @map('min_payout')
+    createdAt    DateTime @default(now()) @map('created_at')
+    updatedAt    DateTime @updatedAt @map('updated_at')
+
+    workspace Organization @relation(fields: [workspaceId], references: [id])
+
+    @@map('payout_rules')
+}
+
+model UserProfile {
+    id                String   @id @default(uuid())
+    userId            String   @unique @map('user_id')
+    phone             String?
+    bio               String?
+    timezone          String   @default('Asia/Jakarta')
+    locale            String   @default('id')
+    bankName          String?  @map('bank_name')
+    bankAccountNumber String?  @map('bank_account_number')
+    bankAccountName   String?  @map('bank_account_name')
+    metadata          String?
+    createdAt         DateTime @default(now()) @map('created_at')
+    updatedAt         DateTime @updatedAt @map('updated_at')
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@map('user_profiles')
+}
+
+model WorkspacePreference {
+    id                   String   @id @default(uuid())
+    workspaceId          String   @unique @map('workspace_id')
+    defaultHonor         Int      @default(100000) @map('default_honor')
+    minPayout            Int      @default(50000) @map('min_payout')
+    defaultScoreForPublish Int?   @map('default_score_for_publish')
+    publicJoinEnabled    Boolean  @default(true) @map('public_join_enabled')
+    metadata             String?
+    createdAt            DateTime @default(now()) @map('created_at')
+    updatedAt            DateTime @updatedAt @map('updated_at')
+
+    workspace Organization @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+    @@map('workspace_preferences')
+}
+
+model PayoutRequest {
+    id                String    @id @default(uuid())
+    workspaceId       String    @map('workspace_id')
+    contributorId     String    @map('contributor_id')
+    totalAmount       Int       @map('total_amount')
+    status            String    @default('PENDING')
+    bankName          String?   @map('bank_name')
+    bankAccountNumber String?   @map('bank_account_number')
+    bankAccountName   String?   @map('bank_account_name')
+    reviewNotes       String?   @map('review_notes')
+    proofUrl          String?   @map('proof_url')
+    requestedAt       DateTime  @default(now()) @map('requested_at')
+    processedAt       DateTime? @map('processed_at')
+    completedAt       DateTime? @map('completed_at')
+
+    workspace       Organization   @relation(fields: [workspaceId], references: [id])
+    contributor     User           @relation(fields: [contributorId], references: [id])
+    payoutArticles  PayoutArticle[]
+
+    @@map('payout_requests')
+}
+
+model PayoutArticle {
+    id              String @id @default(uuid())
+    payoutRequestId String @map('payout_request_id')
+    articleId       String @map('article_id')
+    amount          Int
+
+    payoutRequest PayoutRequest @relation(fields: [payoutRequestId], references: [id])
+    article       Article       @relation(fields: [articleId], references: [id])
+
+    @@map('payout_articles')
+}
+
+model ActivityLog {
+    id           String   @id @default(uuid())
+    workspaceId  String   @map('workspace_id')
+    userId       String   @map('user_id')
+    action       String
+    resourceType String?  @map('resource_type')
+    resourceId   String?  @map('resource_id')
+    metadata     String?
+    createdAt    DateTime @default(now()) @map('created_at')
+
+    workspace Organization @relation(fields: [workspaceId], references: [id])
+    user      User         @relation(fields: [userId], references: [id])
+
+    @@map('activity_logs')
+}
+
+model WpSyncLog {
+    id          String   @id @default(uuid())
+    workspaceId String   @map('workspace_id')
+    action      String
+    status      String
+    payload     String?
+    createdAt   DateTime @default(now()) @map('created_at')
+
+    workspace Organization @relation(fields: [workspaceId], references: [id])
+
+    @@map('wp_sync_logs')
+}
+
+model User {
+    id              String       @id
+    name            String
+    email           String       @unique
+    emailVerified   Boolean      @default(false)
+    image           String?
+    twoFactorEnabled Boolean    @default(false) @map('two_factor_enabled')
+    createdAt       DateTime     @default(now())
+    updatedAt       DateTime     @default(now()) @updatedAt
+    sessions      Session[]
+    accounts      Account[]
+    members       Member[]
+    invitations   Invitation[]
+
+    profile           UserProfile?
+    twoFactor         TwoFactor?
+
+    articlesAuthored  Article[]        @relation("authoredArticles")
+    articlesReviewed  Article[]        @relation("reviewedArticles")
+    articleReviews    ArticleReview[]
+    articleEvents     ArticleEvent[]
+    payoutRequests    PayoutRequest[]
+    activityLogs      ActivityLog[]
+
+    @@map('user')
+}
+
+model Session {
+    id                   String   @id
+    expiresAt            DateTime
+    token                String   @unique
+    createdAt            DateTime @default(now())
+    updatedAt            DateTime @updatedAt
+    ipAddress            String?
+    userAgent            String?
+    userId               String
+    user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    activeOrganizationId String?
+
+    @@map('session')
+}
+
+model Account {
+    id                    String    @id
+    accountId             String
+    providerId            String
+    userId                String
+    user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    accessToken           String?
+    refreshToken          String?
+    idToken               String?
+    accessTokenExpiresAt  DateTime?
+    refreshTokenExpiresAt DateTime?
+    scope                 String?
+    password              String?
+    createdAt             DateTime  @default(now())
+    updatedAt             DateTime  @updatedAt
+
+    @@map('account')
+}
+
+model Verification {
+    id         String   @id
+    identifier String
+    value      String
+    expiresAt  DateTime
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @default(now()) @updatedAt
+
+    @@map('verification')
+}
+
+model Organization {
+    id          String       @id
+    name        String
+    slug        String       @unique
+    logo        String?
+    createdAt   DateTime
+    metadata    String?
+    members     Member[]
+    invitations Invitation[]
+
+    articles       Article[]
+    categories     Category[]
+    connections    WorkspaceConnection[]
+    payoutRules    PayoutRule[]
+    payoutRequests PayoutRequest[]
+    activityLogs   ActivityLog[]
+    wpSyncLogs     WpSyncLog[]
+    preferences    WorkspacePreference?
+
+    @@map('organization')
+}
+
+model TwoFactor {
+    id                       String   @id
+    userId                   String   @unique
+    secret                   String
+    backupCodes              String?
+    verified                 Boolean?
+    failedVerificationCount  Int      @default(0)
+    lockedUntil              DateTime?
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@map('two_factor')
+}
+
+model Member {
+    id             String       @id
+    organizationId String
+    organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    userId         String
+    user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+    role           String       @default('member')
+    createdAt      DateTime
+
+    @@map('member')
+}
+
+model Invitation {
+    id             String       @id
+    organizationId String
+    organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    email          String
+    role           String?
+    status         String       @default('pending')
+    expiresAt      DateTime
+    createdAt      DateTime     @default(now())
+    inviterId      String
+    user           User         @relation(fields: [inviterId], references: [id], onDelete: Cascade)
+
+    @@map('invitation')
+}

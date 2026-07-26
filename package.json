@@ -1,0 +1,31 @@
+{
+  "name": "kreatur",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "cd backend && bun --env-file ../.env --watch src/index.ts & cd frontend && bun --env-file ../.env -- next dev --port 3000",
+    "dev:backend": "cd backend && bun --env-file ../.env --watch src/index.ts",
+    "dev:frontend": "cd frontend && bun --env-file ../.env -- next dev --port 3000",
+    "build": "cd frontend && next build",
+    "generate": "cd backend && bun run generate",
+    "auth:generate": "cd backend && bun run auth:generate",
+    "db:push": "cd backend && bun run db:push",
+    "migrate:dev": "cd backend && bun run migrate:dev",
+    "migrate:deploy": "cd backend && bun run migrate:deploy"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "dependencies": {
+    "@tailwindcss/typography": "^0.5.20"
+  },
+  "workspaces": [
+    "backend",
+    "frontend",
+    "packages/commons"
+  ],
+  "peerDependencies": {
+    "typescript": "^5.9.3"
+  }
+}

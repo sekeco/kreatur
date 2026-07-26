@@ -1,0 +1,30 @@
+{
+  "format_on_save": "on",
+  "languages": {
+    "TypeScript": {
+      "formatter": ["language_server"],
+      "code_actions_on_format": { "source.fixAll.eslint": true },
+    },
+    "CSS": {
+      "language_servers": ["tailwindcss-intellisense-css"],
+    },
+  },
+  "context_servers": {
+    "shadcn": {
+      "command": "npx",
+      "args": ["shadcn@latest", "mcp"],
+    },
+    "postgres": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres",
+        "postgres://postgres:postgres@127.0.0.1:5432/postgres",
+      ],
+      "env": {},
+    },
+    "better-auth": {
+      "url": "https://mcp.better-auth.com/mcp",
+    },
+  },
+}

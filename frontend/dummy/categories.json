@@ -1,0 +1,74 @@
+[
+  {
+    "id": "cat-1",
+    "name": "Teknologi",
+    "slug": "teknologi",
+    "description": "Artikel tentang teknologi, gadget, dan inovasi digital",
+    "articleCount": 5,
+    "color": "#3b82f6",
+    "createdAt": "2026-06-01T08:00:00Z"
+  },
+  {
+    "id": "cat-2",
+    "name": "Pemasaran",
+    "slug": "pemasaran",
+    "description": "Strategi pemasaran digital, SEO, dan content marketing",
+    "articleCount": 2,
+    "color": "#8b5cf6",
+    "createdAt": "2026-06-01T08:00:00Z"
+  },
+  {
+    "id": "cat-3",
+    "name": "Gadget",
+    "slug": "gadget",
+    "description": "Review dan berita terbaru seputar gadget",
+    "articleCount": 2,
+    "color": "#10b981",
+    "createdAt": "2026-06-05T10:30:00Z"
+  },
+  {
+    "id": "cat-4",
+    "name": "Manajemen",
+    "slug": "manajemen",
+    "description": "Tips manajemen tim, produktivitas, dan kepemimpinan",
+    "articleCount": 1,
+    "color": "#f59e0b",
+    "createdAt": "2026-06-10T14:00:00Z"
+  },
+  {
+    "id": "cat-5",
+    "name": "Ekonomi",
+    "slug": "ekonomi",
+    "description": "Berita dan analisis ekonomi terkini",
+    "articleCount": 1,
+    "color": "#ef4444",
+    "createdAt": "2026-06-15T09:20:00Z"
+  },
+  {
+    "id": "cat-6",
+    "name": "Pendidikan",
+    "slug": "pendidikan",
+    "description": "Artikel seputar dunia pendidikan dan pembelajaran",
+    "articleCount": 1,
+    "color": "#06b6d4",
+    "createdAt": "2026-06-20T11:00:00Z"
+  },
+  {
+    "id": "cat-7",
+    "name": "Karir",
+    "slug": "karir",
+    "description": "Tips karir, pengembangan diri, dan lowongan kerja",
+    "articleCount": 1,
+    "color": "#ec4899",
+    "createdAt": "2026-07-01T07:45:00Z"
+  },
+  {
+    "id": "cat-8",
+    "name": "Kesehatan",
+    "slug": "kesehatan",
+    "description": "Informasi kesehatan, gaya hidup, dan kebugaran",
+    "articleCount": 1,
+    "color": "#14b8a6",
+    "createdAt": "2026-07-05T16:30:00Z"
+  }
+]
