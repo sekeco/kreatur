@@ -104,7 +104,12 @@ export default function SignInPage() {
           <Button
             variant="outline"
             className="w-full"
-            onClick={() => toast.info("Google OAuth akan segera tersedia.")}
+            onClick={() =>
+              authClient.signIn.social({
+                provider: "google",
+                callbackURL: `${window.location.origin}/auth/oauth-callback`,
+              })
+            }
           >
             <GoogleIcon />
             Lanjutkan dengan Google

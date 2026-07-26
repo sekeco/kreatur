@@ -1,13 +1,42 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
 import { Globe, MailSearch } from "lucide-react"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 import { APP_CONFIG } from "@/lib/app-config"
+import { authClient } from "@/lib/auth-client"
 
 export default function CheckEmailPage() {
+  const [resending, setResending] = useState(false)
+
+  async function handleResend() {
+    const email = sessionStorage.getItem("resetEmail")
+    if (!email) {
+      toast.error(
+        "Email tidak ditemukan. Silakan ulangi dari halaman lupa kata sandi."
+      )
+      return
+    }
+
+    setResending(true)
+    const { error } = await authClient.requestPasswordReset({
+      email,
+      redirectTo: `${window.location.origin}/auth/reset-password`,
+    })
+    setResending(false)
+
+    if (error) {
+      toast.error(error.message ?? "Gagal mengirim ulang email reset")
+      return
+    }
+
+    toast.info("Email reset telah dikirim ulang.")
+  }
+
   return (
     <>
       <div className="mx-auto flex w-full flex-col justify-center space-y-8 sm:w-87.5">
@@ -25,10 +54,10 @@ export default function CheckEmailPage() {
           <Button
             className="w-full"
             variant="outline"
-            onClick={() => {
-              toast.info("Email reset telah dikirim ulang.")
-            }}
+            disabled={resending}
+            onClick={handleResend}
           >
+            {resending && <Spinner />}
             Kirim Ulang Email
           </Button>
           <Link

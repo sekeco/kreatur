@@ -48,6 +48,9 @@ export default function ForgotPasswordPage() {
       return
     }
 
+    // Simpan email untuk tombol "Kirim Ulang" di halaman check-email
+    sessionStorage.setItem("resetEmail", data.email)
+
     toast.success("Email terkirim!", {
       description:
         "Jika email terdaftar, Anda akan menerima tautan reset kata sandi.",

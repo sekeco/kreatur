@@ -146,7 +146,7 @@ export default function BoardingPage() {
       if (direction === "prev") return true
       if (value === "wordpress") {
         const valid = await form.trigger(["workspaceName", "workspaceSlug"])
-        if (!valid) toast.info("Lengkapi semua字段 yang wajib diisi")
+        if (!valid) toast.info("Lengkapi semua field yang wajib diisi")
         return valid
       }
       if (value === "review") {
@@ -252,7 +252,7 @@ export default function BoardingPage() {
     toast.success("Ruang kerja berhasil dibuat!", {
       description: "Mengarahkan ke dashboard...",
     })
-    router.push("/orgs/" + data.workspaceSlug + "/dashboard")
+    window.location.href = "/orgs/" + data.workspaceSlug + "/dashboard"
   }
 
   // ── Render ──────────────────────────────────────────────
