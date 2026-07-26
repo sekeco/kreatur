@@ -63,6 +63,7 @@ services:
       dockerfile: frontend/Dockerfile
       args:
         NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL:-http://localhost}
+        NEXT_PUBLIC_FRONTEND_URL: ${FRONTEND_URL:-https://kreatur.sekeco.work}
     container_name: kreatur-frontend
     restart: always
     ports:

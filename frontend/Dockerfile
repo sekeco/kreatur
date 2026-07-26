@@ -19,6 +19,7 @@ COPY frontend ./frontend
 
 # Accept build-time args for Next.js public env vars
 ARG NEXT_PUBLIC_BACKEND_URL
+ARG NEXT_PUBLIC_FRONTEND_URL
 
 # Build Next.js app
 WORKDIR /app/frontend
