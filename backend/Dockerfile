@@ -8,8 +8,8 @@ COPY backend/package.json ./backend/
 COPY frontend/package.json ./frontend/
 COPY packages/commons/package.json ./packages/commons/
 
-# Install all workspace dependencies
-RUN bun install --frozen-lockfile --ignore-scripts
+# Install all workspace dependencies (termasuk postinstall untuk Prisma engine)
+RUN bun install --frozen-lockfile
 
 # Copy workspace package source
 COPY packages ./packages
@@ -20,19 +20,19 @@ COPY backend ./backend
 # Build backend (bundles into dist/)
 RUN cd backend && bun build ./src/index.ts --outdir ./dist --target bun
 
-# Prune devDependencies — only production deps remain
-RUN bun install --production --ignore-scripts
-
 # ---- Runtime Stage ----
 FROM oven/bun:1-slim AS runtime
 WORKDIR /app
 
-# Copy pruned node_modules
+# Copy full node_modules (termasuk devDeps @zenstackhq/cli + Prisma engine)
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/backend/node_modules ./backend/node_modules
 
 # Copy built bundle
 COPY --from=build /app/backend/dist ./dist
+
+# Copy ZenStack schema files (dibutuhkan oleh zen db push di startup)
+COPY --from=build /app/backend/zenstack ./backend/zenstack
 
 # Create storage directory for uploads
 RUN mkdir -p storage/uploads
@@ -44,4 +44,5 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
 
 ENV NODE_ENV=production
 
-CMD bun run dist/index.js
+# Startup: push schema ke DB, lalu jalankan server
+CMD cd backend && bun zen db push --accept-data-loss && cd /app && bun run dist/index.js
