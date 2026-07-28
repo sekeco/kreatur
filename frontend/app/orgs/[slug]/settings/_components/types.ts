@@ -12,6 +12,7 @@ export interface PayoutRulesData {
 
 export interface PreferencesData {
   defaultScoreForPublish: number | null
+  defaultReviewerId: string | null
   publicJoinEnabled: boolean
   locale: string
 }

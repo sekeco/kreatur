@@ -8,7 +8,7 @@ export const membersRouter = new Elysia()
   .use(authGuard)
 
   // GET /api/orgs/:slug/join-status — cek apakah publik join aktif
-  .get("/api/orgs/:slug/join-status", async ({ params }) => {
+  .get("/api/orgs/:slug/joinStatus", async ({ params }) => {
     const org = await db.organization.findUnique({
       where: { slug: params.slug },
     })

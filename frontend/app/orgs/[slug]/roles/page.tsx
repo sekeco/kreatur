@@ -133,7 +133,7 @@ const roles: RoleInfo[] = [
       {
         icon: Ban,
         label: "Skor & Catatan",
-        description: "Beri skor 1-100 dan catatan review",
+        description: "Beri skor 1-5 ★ dan catatan review",
       },
     ],
   },

@@ -6,6 +6,7 @@ import { useParams } from "next/navigation"
 import { Clock, FileEdit, MessageSquare } from "lucide-react"
 
 import { Spinner } from "@/components/ui/spinner"
+import { normalizeRole } from "@/lib/normalize-role"
 import { authClient } from "@/lib/auth-client"
 import { api } from "@/lib/eden-client"
 import { MetricCards } from "./_components/metric-cards"
@@ -64,13 +65,6 @@ interface OrgData {
   totalCategories: number
   connectedWP: number
   pendingPayouts: number
-}
-
-// ─── Helper: map Better Auth role ke internal role ─────
-
-function normalizeRole(raw: string): string {
-  const r = raw.toLowerCase()
-  return r === "member" ? "contributor" : r
 }
 
 // ─── Page ───────────────────────────────────────────────

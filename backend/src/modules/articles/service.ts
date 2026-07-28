@@ -57,6 +57,7 @@ export async function create(data: {
   excerpt?: string
   content?: string
   categoryId?: string
+  coverImageUrl?: string | null
   authorId: string
   workspaceId: string
 }) {
@@ -67,6 +68,7 @@ export async function create(data: {
       excerpt: data.excerpt ?? null,
       content: data.content ?? null,
       categoryId: data.categoryId ?? null,
+      coverImageUrl: data.coverImageUrl ?? null,
       authorId: data.authorId,
       workspaceId: data.workspaceId,
     },
@@ -82,7 +84,7 @@ export async function update(id: string, data: {
   categoryId?: string | null
   status?: string
   reviewerId?: string | null
-  honor?: number
+  honor?: number | null
   coverImageUrl?: string | null
 }) {
   return db.article.update({
@@ -110,8 +112,9 @@ export async function reviewArticle(id: string, data: {
   notes?: string
   reviewerId: string
   autoPublishScore?: number
+  honor?: number | null
 }) {
-  const { decision, score, notes, reviewerId, autoPublishScore } = data
+  const { decision, score, notes, reviewerId, autoPublishScore, honor } = data
 
   // Buat review record
   await db.articleReview.create({
@@ -145,6 +148,10 @@ export async function reviewArticle(id: string, data: {
   const updateData: Record<string, unknown> = { status: newStatus }
   if (newStatus === "APPROVED" || newStatus === "PUBLISHED") {
     updateData.publishedAt = new Date()
+  }
+  // Simpan honor jika dikirim (untuk APPROVED/PUBLISHED)
+  if (honor !== undefined) {
+    updateData.honor = honor
   }
   const article = await db.article.update({
     where: { id },

@@ -13,7 +13,7 @@ export const settingsRouter = new Elysia()
       where: { workspaceId: organization.id } as any,
     })
 
-    let defaultHonor = 100000
+    let defaultHonor = 50000
     let minPayout = 50000
     let defaultScoreForPublish: number | null = null
     let publicJoinEnabled = true
@@ -43,6 +43,7 @@ export const settingsRouter = new Elysia()
       payoutRules: { defaultHonor, minPayout },
       preferences: {
         defaultScoreForPublish,
+        defaultReviewerId: prefs?.defaultReviewerId ?? null,
         publicJoinEnabled,
         locale: "id",
       },
@@ -57,6 +58,7 @@ export const settingsRouter = new Elysia()
 
     const updateData: Record<string, unknown> = {}
     if (body.defaultScoreForPublish !== undefined) updateData.defaultScoreForPublish = body.defaultScoreForPublish
+    if (body.defaultReviewerId !== undefined) updateData.defaultReviewerId = body.defaultReviewerId
     if (body.publicJoinEnabled !== undefined) updateData.publicJoinEnabled = body.publicJoinEnabled
 
     if (existing) {
@@ -79,6 +81,7 @@ export const settingsRouter = new Elysia()
     authOrg: true,
     body: t.Object({
       defaultScoreForPublish: t.Optional(t.Nullable(t.Number())),
+      defaultReviewerId: t.Optional(t.Nullable(t.String())),
       publicJoinEnabled: t.Optional(t.Boolean()),
     }),
   })

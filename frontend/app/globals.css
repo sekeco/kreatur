@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-/* @plugin "@tailwindcss/typography"; — dinonaktifkan sementara karena issue resolusi Turbopack + bun workspace */
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 

@@ -8,8 +8,9 @@
     "email": "email dev --dir src/email/templates",
     "generate": "zen generate",
     "db:push": "bun --env-file ../.env zen db push",
-    "migrate:dev": "zen migrate dev",
-    "migrate:deploy": "zen migrate deploy"
+    "migrate:reset": "bun --env-file ../.env zen migrate reset",
+    "migrate:dev": "bun --env-file ../.env zen migrate dev",
+    "migrate:deploy": "bun --env-file ../.env zen migrate deploy"
   },
   "dependencies": {
     "@kreatur/commons": "workspace:*",

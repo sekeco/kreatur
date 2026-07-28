@@ -21,9 +21,9 @@ export type ArticleStatus = (typeof ArticleStatus)[keyof typeof ArticleStatus]
 
 /** Label yang ditampilkan di UI untuk setiap status */
 export const ArticleStatusLabel: Record<ArticleStatus, string> = {
-  [ArticleStatus.DRAFT]: "Draft",
-  [ArticleStatus.PENDING_REVIEW]: "Pending Review",
-  [ArticleStatus.REVISION_REQUESTED]: "Revisi",
+  [ArticleStatus.DRAFT]: "Draf",
+  [ArticleStatus.PENDING_REVIEW]: "Menunggu Review",
+  [ArticleStatus.REVISION_REQUESTED]: "Perlu Revisi",
   [ArticleStatus.APPROVED]: "Disetujui",
   [ArticleStatus.REJECTED]: "Ditolak",
   [ArticleStatus.PUBLISHED]: "Terbit",

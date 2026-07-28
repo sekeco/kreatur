@@ -69,7 +69,7 @@ function VerifyEmailContent() {
   // Sedang memverifikasi / redirecting
   if (status === "verifying" || status === "redirecting") {
     return (
-      <div className="mx-auto flex w-full flex-col justify-center space-y-8 sm:w-87.5">
+      <div className="mx-auto flex w-full flex-col justify-center space-y-8 px-4 sm:w-sm">
         <div className="space-y-2 text-center">
           <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-muted">
             <Loader2 className="size-6 animate-spin text-muted-foreground" />
@@ -88,7 +88,7 @@ function VerifyEmailContent() {
   // Gagal verifikasi
   if (status === "failed") {
     return (
-      <div className="mx-auto flex w-full flex-col justify-center space-y-8 sm:w-87.5">
+      <div className="mx-auto flex w-full flex-col justify-center space-y-8 px-4 sm:w-sm">
         <div className="space-y-2 text-center">
           <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-destructive/10">
             <XCircle className="size-6 text-destructive" />
@@ -121,7 +121,7 @@ function VerifyEmailContent() {
   // Berhasil verifikasi — sudah redirect, ini fallback
   if (status === "verified") {
     return (
-      <div className="mx-auto flex w-full flex-col justify-center space-y-8 sm:w-87.5">
+      <div className="mx-auto flex w-full flex-col justify-center space-y-8 px-4 sm:w-sm">
         <div className="space-y-2 text-center">
           <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-emerald-500/10">
             <MailCheck className="size-6 text-emerald-500" />
@@ -141,7 +141,7 @@ function VerifyEmailContent() {
   // Halaman default — instruksi cek email (juga: session ada tapi email belum verified)
   return (
     <>
-      <div className="mx-auto flex w-full flex-col justify-center space-y-8 sm:w-87.5">
+      <div className="mx-auto flex w-full flex-col justify-center space-y-8 px-4 sm:w-sm">
         <div className="space-y-2 text-center">
           <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-muted">
             <MailCheck className="size-6 text-muted-foreground" />
@@ -177,7 +177,7 @@ function VerifyEmailContent() {
         </div>
       </div>
 
-      <div className="absolute bottom-5 flex w-full justify-between px-10">
+      <div className="absolute bottom-5 flex w-full justify-between px-4 lg:px-10">
         <div className="text-sm">{APP_CONFIG.copyright}</div>
         <div className="flex items-center gap-1 text-sm">
           <Globe className="size-4 text-muted-foreground" />

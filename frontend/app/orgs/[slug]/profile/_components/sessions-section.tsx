@@ -87,7 +87,7 @@ export function SessionsSection({ sessions, slug }: Props) {
       <CardContent className="p-0">
         <Table>
           <TableHeader>
-            <TableRow className="[&_td]:px-4!">
+            <TableRow className="[&_th]:px-4!">
               <TableHead>Perangkat</TableHead>
               <TableHead>IP Address</TableHead>
               <TableHead>Login</TableHead>

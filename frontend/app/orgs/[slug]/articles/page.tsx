@@ -16,7 +16,7 @@ import {
   useReactTable,
   type VisibilityState,
 } from "@tanstack/react-table"
-import { ArrowDownWideNarrow, Download, Plus, Search } from "lucide-react"
+import { ArrowDownWideNarrow, Plus, Search } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
@@ -97,6 +97,7 @@ export default function ArticlesPage() {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({
       search: false,
+      select: false,
     })
   const [pagination, setPagination] = React.useState<PaginationState>({
     pageIndex: 0,
@@ -115,7 +116,7 @@ export default function ArticlesPage() {
     },
     getRowId: (row) => row.id,
     autoResetPageIndex: false,
-    enableRowSelection: true,
+    enableRowSelection: false,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -180,9 +181,6 @@ export default function ArticlesPage() {
           </p>
         </div>
         <div className="flex flex-wrap justify-start gap-2">
-          <Button variant="outline">
-            <Download /> Ekspor
-          </Button>
           <Link href={`/orgs/${slug}/articles/new`}>
             <Button>
               <Plus /> Artikel Baru
@@ -190,71 +188,81 @@ export default function ArticlesPage() {
           </Link>
         </div>
       </div>
-      <Card>
-        <CardHeader className="flex flex-wrap items-center justify-between gap-3 px-4">
-          {selectedCount > 0 && (
-            <div className="flex items-center gap-3">
-              <div className="text-sm text-muted-foreground tabular-nums">
-                {selectedCount} dipilih
-              </div>
-            </div>
-          )}
-          <InputGroup className="w-full md:w-64">
-            <InputGroupAddon align="inline-start">
-              <Search className="size-3.5" />
-            </InputGroupAddon>
-            <InputGroupInput
-              className="h-7"
-              placeholder="Cari artikel..."
-              value={searchQuery}
-              onChange={(event) => setSearchInput(event.target.value)}
-            />
-            <InputGroupAddon align="inline-end">
-              <Kbd className="h-4 text-[10px]">/</Kbd>
-            </InputGroupAddon>
-          </InputGroup>
-          <div className="grow" />
-          <Select
-            value={statusFilter}
-            onValueChange={(value) => setColumnSelectFilter("status", value)}
-          >
-            <SelectTrigger>
-              <span className="text-muted-foreground">Status:</span>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent position="popper" align="start">
-              <SelectGroup>
-                {filters.status.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          <Select
-            value={getSortValue(sorting)}
-            onValueChange={handleSortChange}
-          >
-            <SelectTrigger>
-              <ArrowDownWideNarrow className="size-4" />
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent position="popper" align="start">
-              <SelectGroup>
-                {articleSortOptions.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </CardHeader>
-        <CardContent className="p-0">
-          <ArticlesTable table={table} />
-        </CardContent>
-      </Card>
+
+      {!loading && articles.length === 0 ? (
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center gap-4 py-16">
+            <h2 className="text-lg font-medium">Belum ada artikel</h2>
+            <p className="text-sm text-muted-foreground">
+              Buat artikel pertama Anda untuk memulai.
+            </p>
+            <Link href={`/orgs/${slug}/articles/new`}>
+              <Button>
+                <Plus /> Buat Artikel Pertama
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card>
+          <CardHeader className="flex flex-wrap items-center justify-between gap-3 px-4">
+            <InputGroup className="w-full md:w-64">
+              <InputGroupAddon align="inline-start">
+                <Search className="size-3.5" />
+              </InputGroupAddon>
+              <InputGroupInput
+                className="h-7"
+                placeholder="Cari artikel..."
+                value={searchQuery}
+                onChange={(event) => setSearchInput(event.target.value)}
+              />
+              <InputGroupAddon align="inline-end">
+                <Kbd className="h-4 text-[10px]">/</Kbd>
+              </InputGroupAddon>
+            </InputGroup>
+            <div className="grow" />
+            <Select
+              value={statusFilter}
+              onValueChange={(value) => setColumnSelectFilter("status", value)}
+            >
+              <SelectTrigger>
+                <span className="text-muted-foreground">Status:</span>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent position="popper" align="start">
+                <SelectGroup>
+                  {filters.status.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            <Select
+              value={getSortValue(sorting)}
+              onValueChange={handleSortChange}
+            >
+              <SelectTrigger>
+                <ArrowDownWideNarrow className="size-4" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent position="popper" align="start">
+                <SelectGroup>
+                  {articleSortOptions.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </CardHeader>
+          <CardContent className="p-0">
+            <ArticlesTable table={table} />
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

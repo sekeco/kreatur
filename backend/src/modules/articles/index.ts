@@ -5,7 +5,7 @@ import { ok, fail, okPaginated } from "../../lib/response"
 import { sendArticleReviewEmail } from "../../email"
 import * as articleService from "./service"
 
-const AUTO_PUBLISH_SCORE = 85
+const AUTO_PUBLISH_SCORE = 80
 
 export const articlesRouter = new Elysia()
   .use(authGuard)
@@ -54,12 +54,23 @@ export const articlesRouter = new Elysia()
 
   // POST /api/orgs/:slug/articles — buat artikel baru
   .post("/api/orgs/:slug/articles", async ({ organization, body, user }) => {
+    // Hanya contributor & owner yang boleh membuat artikel
+    const member = await db.member.findFirst({
+      where: { organizationId: organization.id, userId: user.id },
+    })
+    if (!member) return fail("Anda bukan anggota organisasi ini")
+    const normalizedRole = member.role.toLowerCase() === "member" ? "contributor" : member.role.toLowerCase()
+    if (normalizedRole !== "contributor" && normalizedRole !== "owner") {
+      return fail("Hanya kontributor dan pemilik yang dapat membuat artikel")
+    }
+
     const article = await articleService.create({
       title: body.title,
       slug: body.slug,
       excerpt: body.excerpt,
       content: body.content,
       categoryId: body.categoryId,
+      coverImageUrl: body.coverImageUrl,
       authorId: user.id,
       workspaceId: organization.id,
     })
@@ -78,6 +89,7 @@ export const articlesRouter = new Elysia()
       excerpt: t.Optional(t.String()),
       content: t.Optional(t.String()),
       categoryId: t.Optional(t.String()),
+      coverImageUrl: t.Optional(t.Nullable(t.String())),
     }),
   })
 
@@ -137,13 +149,21 @@ export const articlesRouter = new Elysia()
       return fail("Hanya artikel dengan status DRAFT atau REVISION_REQUESTED yang bisa disubmit")
     }
 
-    // Jika reviewerId tidak dikirim, cari owner organisasi sebagai default
+    // Jika reviewerId tidak dikirim, cek default_reviewer_id dari preferences,
+    // lalu fallback ke owner organisasi
     let reviewerId = body.reviewerId
     if (!reviewerId) {
-      const ownerMember = await db.member.findFirst({
-        where: { organizationId: organization.id, role: "owner" },
+      const prefs = await db.workspacePreference.findUnique({
+        where: { workspaceId: organization.id } as any,
       })
-      reviewerId = ownerMember?.userId
+      if (prefs?.defaultReviewerId) {
+        reviewerId = prefs.defaultReviewerId
+      } else {
+        const ownerMember = await db.member.findFirst({
+          where: { organizationId: organization.id, role: "owner" },
+        })
+        reviewerId = ownerMember?.userId
+      }
     }
 
     if (!reviewerId) {
@@ -170,12 +190,19 @@ export const articlesRouter = new Elysia()
     if (!existing || existing.workspaceId !== organization.id) return fail("Artikel tidak ditemukan")
     if (existing.status !== "PENDING_REVIEW") return fail("Hanya artikel dengan status PENDING_REVIEW yang bisa direview")
 
+    // Cek threshold auto-publish dari preferences workspace, fallback ke default
+    const prefs = await db.workspacePreference.findUnique({
+      where: { workspaceId: organization.id } as any,
+    })
+    const autoPublishScore = prefs?.defaultScoreForPublish ?? AUTO_PUBLISH_SCORE
+
     const article = await articleService.reviewArticle(params.id, {
       decision: body.decision,
       score: body.score,
       notes: body.notes,
       reviewerId: user.id,
-      autoPublishScore: AUTO_PUBLISH_SCORE,
+      autoPublishScore,
+      honor: body.honor,
     })
 
     const eventType = body.decision === "APPROVED"
@@ -187,7 +214,7 @@ export const articlesRouter = new Elysia()
       articleId: article.id,
       userId: user.id,
       eventType,
-      metadata: JSON.stringify({ score: body.score, notes: body.notes }),
+      metadata: JSON.stringify({ score: body.score, notes: body.notes, honor: body.honor }),
     })
 
     // Kirim email notifikasi ke penulis
@@ -213,6 +240,7 @@ export const articlesRouter = new Elysia()
       decision: t.UnionEnum(["APPROVED", "REVISION_REQUESTED", "REJECTED"]),
       score: t.Optional(t.Number()),
       notes: t.Optional(t.String()),
+      honor: t.Optional(t.Nullable(t.Number())),
     }),
   })
 

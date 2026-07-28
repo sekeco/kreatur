@@ -70,7 +70,7 @@ export default function SignUpPage() {
 
   return (
     <>
-      <div className="mx-auto flex w-full flex-col justify-center space-y-8 sm:w-87.5">
+      <div className="mx-auto flex w-full flex-col justify-center space-y-8 px-4 sm:w-sm">
         <div className="space-y-2 text-center">
           <h1 className="text-3xl font-medium">Buat akun baru</h1>
           <p className="text-sm text-muted-foreground">
@@ -198,7 +198,7 @@ export default function SignUpPage() {
         </div>
       </div>
 
-      <div className="absolute top-5 flex w-full justify-end px-10">
+      <div className="absolute top-5 flex w-full justify-end px-4 lg:px-10">
         <div className="text-sm text-muted-foreground">
           Sudah punya akun?{" "}
           <Link
@@ -211,7 +211,7 @@ export default function SignUpPage() {
         </div>
       </div>
 
-      <div className="absolute bottom-5 flex w-full justify-between px-10">
+      <div className="absolute bottom-5 flex w-full justify-between px-4 lg:px-10">
         <div className="text-sm">{APP_CONFIG.copyright}</div>
         <div className="flex items-center gap-1 text-sm">
           <Globe className="size-4 text-muted-foreground" />

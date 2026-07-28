@@ -36,7 +36,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Field, FieldLabel } from "@/components/ui/field"
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Progress } from "@/components/ui/progress"
 import {
@@ -46,6 +46,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Separator } from "@/components/ui/separator"
 import { Spinner } from "@/components/ui/spinner"
 import {
   Timeline,
@@ -57,6 +58,8 @@ import {
   TimelineTime,
   TimelineTitle,
 } from "@/components/ui/timeline"
+import { SaveIndicator } from "@/components/save-indicator"
+import { useAutoSave } from "@/hooks/use-auto-save"
 import { statusMeta } from "../_components/article-data"
 import { ArticleStatus, ArticleStatusLabel } from "@kreatur/commons"
 
@@ -74,6 +77,7 @@ const TipTapEditor = dynamic(
   }
 )
 
+import { Breadcrumb } from "@/components/breadcrumb-nav"
 import { authClient } from "@/lib/auth-client"
 import { api } from "@/lib/eden-client"
 import { cn, getErrorMessage } from "@/lib/utils"
@@ -98,6 +102,12 @@ interface ArticleEvent {
 // ─── Helpers ────────────────────────────────────────────
 
 function isValidUrl(url: string): boolean {
+  // Relative path (contoh: /uploads/image.jpg)
+  if (url.startsWith("/")) return true
+
+  // Absolute path without protocol (contoh: //cdn.example.com/image.jpg)
+  if (url.startsWith("//")) return true
+
   try {
     const parsed = new URL(url)
     return parsed.protocol === "http:" || parsed.protocol === "https:"
@@ -109,7 +119,7 @@ function isValidUrl(url: string): boolean {
 const QUALITY_ITEMS = [
   { key: "judul", label: "Judul artikel diisi" },
   { key: "kategori", label: "Kategori dipilih" },
-  { key: "wordCount", label: "Jumlah kata 500–1000" },
+  { key: "wordCount", label: "Jumlah kata 500–1000 (saran)" },
   { key: "konten", label: "Konten artikel ditulis" },
   { key: "cover", label: "Cover gambar diisi" },
 ] as const
@@ -143,6 +153,94 @@ export default function ArticleDetailPage() {
   const [submitting, setSubmitting] = React.useState(false)
   const [submitSuccess, setSubmitSuccess] = React.useState(false)
 
+  // Track perubahan yang belum disimpan
+  const initialContentRef = React.useRef({
+    title: "",
+    categoryId: "",
+    coverImageUrl: "",
+    content: "",
+  })
+  const isDirty = React.useMemo(() => {
+    return (
+      title !== initialContentRef.current.title ||
+      categoryId !== initialContentRef.current.categoryId ||
+      coverImageUrl !== initialContentRef.current.coverImageUrl ||
+      content !== initialContentRef.current.content
+    )
+  }, [title, categoryId, coverImageUrl, content])
+
+  // ── Derived values ──
+  const status = article?.status as keyof typeof ArticleStatusLabel | undefined
+  const isDraft = status === "DRAFT"
+  const isRevisionRequested = status === "REVISION_REQUESTED"
+  const isContributor = userRole === "contributor"
+  const isEditor = userRole === "editor"
+  const canEdit = isContributor && (isDraft || isRevisionRequested)
+  const statusMetaData = status
+    ? (statusMeta[status] ?? statusMeta.DRAFT)
+    : statusMeta.DRAFT
+
+  const isCoverUrlPresent = coverImageUrl.trim().length > 0
+  const isCoverUrlValid = isCoverUrlPresent && isValidUrl(coverImageUrl)
+
+  // Word count
+  const wordCount = React.useMemo(() => {
+    const text = content.replace(/<[^>]*>/g, "")
+    return text.trim() ? text.trim().split(/\s+/).length : 0
+  }, [content])
+
+  // Quality checklist (only for DRAFT)
+  const checklist = React.useMemo(() => {
+    const hasContent = content.replace(/<[^>]*>/g, "").trim().length > 0
+    return {
+      judul: title.trim().length > 0,
+      kategori: categoryId.length > 0,
+      wordCount: wordCount >= 500 && wordCount <= 1000,
+      konten: hasContent,
+      cover: isCoverUrlValid,
+    }
+  }, [title, categoryId, wordCount, isCoverUrlValid, content])
+
+  const checkedCount = Object.values(checklist).filter(Boolean).length
+  const allChecked = checkedCount === QUALITY_ITEMS.length
+
+  // ── Auto-save ──
+  const autoSaveHandler = React.useCallback(async () => {
+    if (!title.trim()) return
+
+    const isValidCover =
+      coverImageUrl.trim().length > 0 && isValidUrl(coverImageUrl)
+
+    const { error } = await api.api
+      .orgs({ slug })
+      .articles({ id })
+      .put({
+        title: title.trim(),
+        content: content || undefined,
+        categoryId: categoryId || null,
+        coverImageUrl: isValidCover ? coverImageUrl : null,
+      })
+    if (error) {
+      throw new Error(getErrorMessage(error) ?? "Gagal auto-save")
+    }
+    initialContentRef.current = { title, categoryId, coverImageUrl, content }
+  }, [slug, id, title, content, categoryId, coverImageUrl])
+
+  const { saveStatus } = useAutoSave({
+    onSave: autoSaveHandler,
+    isDirty: isDirty && !!article && canEdit,
+  })
+
+  // ── beforeunload guard ──
+  React.useEffect(() => {
+    if (!isDirty) return
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault()
+    }
+    window.addEventListener("beforeunload", handler)
+    return () => window.removeEventListener("beforeunload", handler)
+  }, [isDirty])
+
   // ── Fetch data ──
   React.useEffect(() => {
     if (!slug || !id) return
@@ -159,6 +257,12 @@ export default function ArticleDetailPage() {
           setCoverImageUrl(a.coverImageUrl ?? "")
           setCategoryId(a.categoryId ?? "")
           setContent(a.content ?? "")
+          initialContentRef.current = {
+            title: a.title ?? "",
+            categoryId: a.categoryId ?? "",
+            coverImageUrl: a.coverImageUrl ?? "",
+            content: a.content ?? "",
+          }
         }
         if (catRes.data?.success && Array.isArray(catRes.data.data)) {
           setCategories(catRes.data.data)
@@ -189,40 +293,6 @@ export default function ArticleDetailPage() {
     })
   }, [slug, id, loadingPage, router])
 
-  // ── Derived values ──
-  const status = article?.status as keyof typeof ArticleStatusLabel | undefined
-  const isDraft = status === "DRAFT"
-  const isContributor = userRole === "contributor"
-  const isEditor = userRole === "editor"
-  const canEdit = isContributor && isDraft
-  const statusMetaData = status
-    ? (statusMeta[status] ?? statusMeta.DRAFT)
-    : statusMeta.DRAFT
-
-  // Word count
-  const wordCount = React.useMemo(() => {
-    const text = content.replace(/<[^>]*>/g, "")
-    return text.trim() ? text.trim().split(/\s+/).length : 0
-  }, [content])
-
-  const isCoverUrlPresent = coverImageUrl.trim().length > 0
-  const isCoverUrlValid = isCoverUrlPresent && isValidUrl(coverImageUrl)
-
-  // Quality checklist (only for DRAFT)
-  const checklist = React.useMemo(() => {
-    const hasContent = content.replace(/<[^>]*>/g, "").trim().length > 0
-    return {
-      judul: title.trim().length > 0,
-      kategori: categoryId.length > 0,
-      wordCount: wordCount >= 500 && wordCount <= 1000,
-      konten: hasContent,
-      cover: isCoverUrlValid,
-    }
-  }, [title, categoryId, wordCount, isCoverUrlValid, content])
-
-  const checkedCount = Object.values(checklist).filter(Boolean).length
-  const allChecked = checkedCount === QUALITY_ITEMS.length
-
   // ── Handlers ──
 
   async function handleSave() {
@@ -245,6 +315,12 @@ export default function ArticleDetailPage() {
       if (error) {
         toast.error(getErrorMessage(error) ?? "Gagal menyimpan")
       } else {
+        initialContentRef.current = {
+          title,
+          categoryId: categoryId || "",
+          coverImageUrl,
+          content,
+        }
         toast.success("Perubahan berhasil disimpan")
         router.refresh()
       }
@@ -318,8 +394,19 @@ export default function ArticleDetailPage() {
             <ArrowLeft className="size-5" />
           </Link>
           <div className="space-y-1">
+            <Breadcrumb
+              items={[
+                { label: "Artikel", href: `/orgs/${slug}/articles` },
+                { label: article.title },
+              ]}
+              className="mb-0.5"
+            />
             <h1 className="text-2xl font-medium">
-              {isDraft ? "Edit Artikel" : "Detail Artikel"}
+              {isRevisionRequested
+                ? "Revisi Artikel"
+                : isDraft
+                  ? "Edit Artikel"
+                  : "Detail Artikel"}
             </h1>
             <div className="text-sm text-muted-foreground">{article.title}</div>
           </div>
@@ -335,15 +422,17 @@ export default function ArticleDetailPage() {
             {ArticleStatusLabel[status ?? ArticleStatus.DRAFT]}
           </Badge>
           {canEdit && !submitSuccess && (
-            <Button variant="outline" onClick={handleSave} disabled={saving}>
-              {saving ? (
-                <Spinner data-icon="inline-start" />
-              ) : (
-                <Save data-icon="inline-start" />
-              )}
-              {/*isDraft*/}
-              Simpan {isDraft ? "Draft" : ""}
-            </Button>
+            <div className="flex items-center gap-3">
+              <SaveIndicator status={saveStatus} />
+              <Button variant="outline" onClick={handleSave} disabled={saving}>
+                {saving ? (
+                  <Spinner data-icon="inline-start" />
+                ) : (
+                  <Save data-icon="inline-start" />
+                )}
+                Simpan {isDraft ? "Draf" : isRevisionRequested ? "Revisi" : ""}
+              </Button>
+            </div>
           )}
         </div>
       </div>

@@ -54,8 +54,7 @@ export class SchemaType implements SchemaDef {
                 honor: {
                     name: "honor",
                     type: "Int",
-                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal(0) }] }] as readonly AttributeApplication[],
-                    default: 0 as FieldDefault
+                    optional: true
                 },
                 coverImageUrl: {
                     name: "coverImageUrl",
@@ -459,8 +458,8 @@ export class SchemaType implements SchemaDef {
                 defaultHonor: {
                     name: "defaultHonor",
                     type: "Int",
-                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal(100000) }] }, { name: "@map", args: [{ name: "name", value: ExpressionUtils.literal("default_honor") }] }] as readonly AttributeApplication[],
-                    default: 100000 as FieldDefault
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal(50000) }] }, { name: "@map", args: [{ name: "name", value: ExpressionUtils.literal("default_honor") }] }] as readonly AttributeApplication[],
+                    default: 50000 as FieldDefault
                 },
                 minPayout: {
                     name: "minPayout",
@@ -610,8 +609,8 @@ export class SchemaType implements SchemaDef {
                 defaultHonor: {
                     name: "defaultHonor",
                     type: "Int",
-                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal(100000) }] }, { name: "@map", args: [{ name: "name", value: ExpressionUtils.literal("default_honor") }] }] as readonly AttributeApplication[],
-                    default: 100000 as FieldDefault
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal(50000) }] }, { name: "@map", args: [{ name: "name", value: ExpressionUtils.literal("default_honor") }] }] as readonly AttributeApplication[],
+                    default: 50000 as FieldDefault
                 },
                 minPayout: {
                     name: "minPayout",
@@ -624,6 +623,12 @@ export class SchemaType implements SchemaDef {
                     type: "Int",
                     optional: true,
                     attributes: [{ name: "@map", args: [{ name: "name", value: ExpressionUtils.literal("default_score_for_publish") }] }] as readonly AttributeApplication[]
+                },
+                defaultReviewerId: {
+                    name: "defaultReviewerId",
+                    type: "String",
+                    optional: true,
+                    attributes: [{ name: "@map", args: [{ name: "name", value: ExpressionUtils.literal("default_reviewer_id") }] }] as readonly AttributeApplication[]
                 },
                 publicJoinEnabled: {
                     name: "publicJoinEnabled",

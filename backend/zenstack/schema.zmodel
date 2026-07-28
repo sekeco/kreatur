@@ -11,7 +11,7 @@ model Article {
     content       String?
     status        String    @default('DRAFT')
     wordCount     Int       @default(0) @map('word_count')
-    honor         Int       @default(0)
+    honor         Int?
     coverImageUrl String?   @map('cover_image_url')
     categoryId    String?   @map('category_id')
     authorId      String    @map('author_id')
@@ -95,7 +95,7 @@ model WorkspaceConnection {
 model PayoutRule {
     id           String   @id @default(uuid())
     workspaceId  String   @unique @map('workspace_id')
-    defaultHonor Int      @default(100000) @map('default_honor')
+    defaultHonor Int      @default(50000) @map('default_honor')
     minPayout    Int      @default(50000) @map('min_payout')
     createdAt    DateTime @default(now()) @map('created_at')
     updatedAt    DateTime @updatedAt @map('updated_at')
@@ -127,9 +127,10 @@ model UserProfile {
 model WorkspacePreference {
     id                   String   @id @default(uuid())
     workspaceId          String   @unique @map('workspace_id')
-    defaultHonor         Int      @default(100000) @map('default_honor')
+    defaultHonor         Int      @default(50000) @map('default_honor')
     minPayout            Int      @default(50000) @map('min_payout')
     defaultScoreForPublish Int?   @map('default_score_for_publish')
+    defaultReviewerId    String?  @map('default_reviewer_id')
     publicJoinEnabled    Boolean  @default(true) @map('public_join_enabled')
     metadata             String?
     createdAt            DateTime @default(now()) @map('created_at')

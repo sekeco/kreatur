@@ -8,7 +8,7 @@ Elysia backend (Drizzle ORM, PostgreSQL, Better Auth) and a Next.js 16 + shadcn/
 frontend. Core features: article management with rich-text editing, customizable
 editorial workflows (Draft → Review → Approve → Publish), WordPress integration,
 contributor honor tracking and payout management, team collaboration with
-RBAC, AI suggestions, and activity logging. All UI text and documentation are
+RBAC, and activity logging. All UI text and documentation are
 in Indonesian.
 
 ## Repository Structure

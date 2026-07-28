@@ -13,18 +13,21 @@ import {
   useReactTable,
   type VisibilityState,
 } from "@tanstack/react-table"
-import {
-  AlertCircle,
-  ArrowDownWideNarrow,
-  Download,
-  Search,
-} from "lucide-react"
+import { AlertCircle, ArrowDownWideNarrow, Search } from "lucide-react"
+import Link from "next/link"
 import { useParams } from "next/navigation"
 import * as React from "react"
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
 import {
   InputGroup,
   InputGroupAddon,
@@ -78,6 +81,12 @@ export default function PayoutsPage() {
   const [payouts, setPayouts] = React.useState<PayoutRow[]>([])
   const [minPayout, setMinPayout] = React.useState(0)
   const [eligibleTotalHonor, setEligibleTotalHonor] = React.useState(0)
+  const [eligibleArticles, setEligibleArticles] = React.useState<
+    Array<{ id: string; title: string; honor: number }>
+  >([])
+  const [bankDataFilled, setBankDataFilled] = React.useState<boolean | null>(
+    null
+  )
 
   // Ambil role & user ID
   React.useEffect(() => {
@@ -98,7 +107,7 @@ export default function PayoutsPage() {
 
   const [refreshKey, setRefreshKey] = React.useState(0)
 
-  // Ambil payout rules + eligible articles untuk contributor
+  // Ambil payout rules + eligible articles + bank data untuk contributor
   React.useEffect(() => {
     if (!slug || userRole !== "contributor" || !userId) return
 
@@ -107,16 +116,28 @@ export default function PayoutsPage() {
       api.api.orgs({ slug }).payouts["eligible-articles"].get({
         query: { authorId: userId },
       }),
-    ]).then(([rulesRes, articlesRes]) => {
+      api.api.orgs({ slug }).profile.get(),
+    ]).then(([rulesRes, articlesRes, profileRes]) => {
       const rulesData = (rulesRes.data as any)?.data
       if (rulesData?.minPayout) {
         setMinPayout(rulesData.minPayout)
       }
-      const articles = ((articlesRes.data as any)?.data ?? []) as {
+      const articles = ((articlesRes.data as any)?.data ?? []) as Array<{
+        id: string
+        title: string
         honor: number
-      }[]
+      }>
+      setEligibleArticles(articles)
       const total = articles.reduce((sum, a) => sum + (a.honor ?? 0), 0)
       setEligibleTotalHonor(total)
+
+      // Cek data bank
+      const profile = (profileRes.data as any)?.data?.profile
+      const hasBank =
+        profile?.bankName &&
+        profile?.bankAccountNumber &&
+        profile?.bankAccountName
+      setBankDataFilled(Boolean(hasBank))
     })
   }, [slug, userRole, userId, refreshKey])
 
@@ -149,11 +170,11 @@ export default function PayoutsPage() {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({ search: false })
 
-  // Sembunyikan kolom select & bank untuk kontributor
+  // Sembunyikan kolom bank untuk kontributor
   React.useEffect(() => {
     setColumnVisibility((prev) => ({
       ...prev,
-      select: userRole === "contributor" ? false : true,
+      select: false,
       bankInfo: userRole === "contributor" ? false : true,
     }))
   }, [userRole])
@@ -174,7 +195,7 @@ export default function PayoutsPage() {
     },
     getRowId: (row) => row.id,
     autoResetPageIndex: false,
-    enableRowSelection: userRole !== "contributor",
+    enableRowSelection: false,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -228,11 +249,7 @@ export default function PayoutsPage() {
           </p>
         </div>
         <div className="flex flex-wrap justify-start gap-2">
-          {userRole !== "contributor" && (
-            <Button variant="outline">
-              <Download /> Ekspor
-            </Button>
-          )}
+          {/* Ekspor button disabled for now */}
           {userRole === "contributor" && eligibleTotalHonor >= minPayout && (
             <RequestPayoutDialog
               onPayoutCreated={() => setRefreshKey((k) => k + 1)}
@@ -240,6 +257,65 @@ export default function PayoutsPage() {
           )}
         </div>
       </div>
+
+      {/* Eligible articles breakdown */}
+      {userRole === "contributor" && eligibleArticles.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">
+              Artikel Tersedia untuk Pencairan
+            </CardTitle>
+            <CardDescription>
+              {eligibleTotalHonor >= minPayout
+                ? `Total Rp${eligibleTotalHonor.toLocaleString("id-ID")} — sudah memenuhi minimum ${minPayout.toLocaleString("id-ID")}`
+                : `Terkumpul Rp${eligibleTotalHonor.toLocaleString("id-ID")} dari minimum Rp${minPayout.toLocaleString("id-ID")}`}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-1">
+              {eligibleArticles.map((a) => (
+                <div
+                  key={a.id}
+                  className="flex items-center justify-between rounded-md px-2 py-1.5 text-sm hover:bg-muted/50"
+                >
+                  <span className="flex-1 truncate">{a.title}</span>
+                  <span className="ml-2 text-muted-foreground tabular-nums">
+                    Rp{(a.honor ?? 0).toLocaleString("id-ID")}
+                  </span>
+                </div>
+              ))}
+              <Separator className="my-2" />
+              <div className="flex items-center justify-between px-2 py-1 text-sm font-medium">
+                <span>Total</span>
+                <span className="tabular-nums">
+                  Rp{eligibleTotalHonor.toLocaleString("id-ID")}
+                </span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Bank data prompt */}
+      {userRole === "contributor" && bankDataFilled === false && (
+        <Alert variant="default">
+          <AlertCircle className="size-4" />
+          <AlertTitle>Data Bank Belum Diisi</AlertTitle>
+          <AlertDescription className="flex flex-col gap-3">
+            <span>
+              Anda belum mengisi data bank. Isi data rekening terlebih dahulu di
+              halaman profil sebelum mengajukan pencairan.
+            </span>
+            <div>
+              <Link href={`/orgs/${slug}/profile`}>
+                <Button variant="outline" size="sm">
+                  Isi Data Bank di Profil
+                </Button>
+              </Link>
+            </div>
+          </AlertDescription>
+        </Alert>
+      )}
 
       {userRole === "contributor" &&
         eligibleTotalHonor > 0 &&

@@ -85,7 +85,7 @@ export default function JoinPage() {
 
   if (joinStatus === "loading") {
     return (
-      <div className="mx-auto flex w-full flex-col justify-center space-y-8 sm:w-87.5">
+      <div className="mx-auto flex w-full flex-col justify-center space-y-8 px-4 sm:w-sm">
         <div className="flex justify-center">
           <Spinner />
         </div>
@@ -98,7 +98,7 @@ export default function JoinPage() {
   if (joinStatus === "closed") {
     return (
       <>
-        <div className="mx-auto flex w-full flex-col justify-center space-y-8 sm:w-87.5">
+        <div className="mx-auto flex w-full flex-col justify-center space-y-8 px-4 sm:w-sm">
           <Empty>
             <EmptyHeader>
               <EmptyMedia variant="icon">
@@ -115,7 +115,7 @@ export default function JoinPage() {
           </Empty>
         </div>
 
-        <div className="absolute bottom-5 flex w-full justify-between px-10">
+        <div className="absolute bottom-5 flex w-full justify-between px-4 lg:px-10">
           <div className="text-sm">{APP_CONFIG.copyright}</div>
           <div className="flex items-center gap-1 text-sm">
             <Globe className="size-4 text-muted-foreground" />
@@ -130,7 +130,7 @@ export default function JoinPage() {
 
   if (!slug) {
     return (
-      <div className="mx-auto flex w-full flex-col justify-center space-y-8 sm:w-87.5">
+      <div className="mx-auto flex w-full flex-col justify-center space-y-8 px-4 sm:w-sm">
         <div className="space-y-2 text-center">
           <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-destructive/10">
             <Globe className="size-6 text-destructive" />
@@ -156,7 +156,7 @@ export default function JoinPage() {
 
   if (checkingMembership && session) {
     return (
-      <div className="mx-auto flex w-full flex-col justify-center space-y-8 sm:w-87.5">
+      <div className="mx-auto flex w-full flex-col justify-center space-y-8 px-4 sm:w-sm">
         <div className="flex justify-center">
           <Spinner />
         </div>
@@ -195,7 +195,7 @@ export default function JoinPage() {
           </Empty>
         </div>
 
-        <div className="absolute bottom-5 flex w-full justify-between px-10">
+        <div className="absolute bottom-5 flex w-full justify-between px-4 lg:px-10">
           <div className="text-sm">{APP_CONFIG.copyright}</div>
           <div className="flex items-center gap-1 text-sm">
             <Globe className="size-4 text-muted-foreground" />
@@ -233,7 +233,7 @@ export default function JoinPage() {
   if (session && !isMember) {
     return (
       <>
-        <div className="mx-auto flex w-full flex-col justify-center space-y-8 sm:w-87.5">
+        <div className="mx-auto flex w-full flex-col justify-center space-y-8 px-4 sm:w-sm">
           <div className="space-y-2 text-center">
             <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-muted">
               <Globe className="size-6 text-muted-foreground" />
@@ -250,7 +250,7 @@ export default function JoinPage() {
           </Button>
         </div>
 
-        <div className="absolute bottom-5 flex w-full justify-between px-10">
+        <div className="absolute bottom-5 flex w-full justify-between px-4 lg:px-10">
           <div className="text-sm">{APP_CONFIG.copyright}</div>
           <div className="flex items-center gap-1 text-sm">
             <Globe className="size-4 text-muted-foreground" />
@@ -291,7 +291,7 @@ export default function JoinPage() {
 
   return (
     <>
-      <div className="mx-auto flex w-full flex-col justify-center space-y-8 sm:w-87.5">
+      <div className="mx-auto flex w-full flex-col justify-center space-y-8 px-4 sm:w-sm">
         <div className="space-y-2 text-center">
           <h1 className="text-3xl font-medium">Bergabung ke ruang kerja</h1>
           <p className="text-sm text-muted-foreground">
@@ -398,7 +398,7 @@ export default function JoinPage() {
         </div>
       </div>
 
-      <div className="absolute top-5 flex w-full justify-end px-10">
+      <div className="absolute top-5 flex w-full justify-end px-4 lg:px-10">
         <div className="text-sm text-muted-foreground">
           Sudah punya akun?{" "}
           <Link
@@ -411,7 +411,7 @@ export default function JoinPage() {
         </div>
       </div>
 
-      <div className="absolute bottom-5 flex w-full justify-between px-10">
+      <div className="absolute bottom-5 flex w-full justify-between px-4 lg:px-10">
         <div className="text-sm">{APP_CONFIG.copyright}</div>
         <div className="flex items-center gap-1 text-sm">
           <Globe className="size-4 text-muted-foreground" />

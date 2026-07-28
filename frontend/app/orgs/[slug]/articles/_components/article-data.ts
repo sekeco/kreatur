@@ -27,10 +27,6 @@ export type ArticleRow = {
   publishedAt: string | null
 }
 
-import articlesData from "@/dummy/articles.json"
-
-export const articles: ArticleRow[] = articlesData as ArticleRow[]
-
 export const statusFilterOptions = [
   { value: "all", label: "Semua Status" },
   ...ALL_ARTICLE_STATUSES.map((s) => ({ value: s, label: ArticleStatusLabel[s] })),
@@ -38,15 +34,7 @@ export const statusFilterOptions = [
 
 export const filters = {
   status: statusFilterOptions,
-  category: [
-    "Semua Kategori",
-    ...new Set(articles.map((a) => a.category)),
-  ] as string[],
-  author: [
-    "Semua Penulis",
-    ...new Set(articles.map((a) => a.author.name)),
-  ] as string[],
-}
+} as const
 
 export const statusMeta: Record<
   ArticleStatusType,

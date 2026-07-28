@@ -16,16 +16,27 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Spinner } from "@/components/ui/spinner"
+import { normalizeRole } from "@/lib/normalize-role"
 import { cn, getErrorMessage, getInitials } from "@/lib/utils"
 import { authClient } from "@/lib/auth-client"
 import { api } from "@/lib/eden-client"
 
+import { ArticleStatusLabel } from "@kreatur/commons"
 import { statusMeta, type ArticleRow } from "./article-data"
 
 function StatusBadge({ status }: { status: ArticleRow["status"] }) {
@@ -37,7 +48,7 @@ function StatusBadge({ status }: { status: ArticleRow["status"] }) {
       variant="outline"
     >
       <span className={cn("size-1.5 rounded-full", meta.dotClass)} />
-      {status}
+      {ArticleStatusLabel[status as keyof typeof ArticleStatusLabel] ?? status}
     </Badge>
   )
 }
@@ -71,9 +82,7 @@ function useUserRole(slug: string) {
     authClient.organization.getActiveMemberRole({}).then(({ data }) => {
       if (data?.role) {
         const raw = Array.isArray(data.role) ? data.role[0] : data.role
-        setRole(
-          raw.toLowerCase() === "member" ? "contributor" : raw.toLowerCase()
-        )
+        setRole(normalizeRole(raw))
       }
     })
   }, [slug])
@@ -86,9 +95,7 @@ export function ArticleActionsCell({ row }: { row: { original: ArticleRow } }) {
   const slug = params.slug
   const article = row.original
   const userRole = useUserRole(slug)
-  const [confirmAction, setConfirmAction] = useState<
-    "delete" | "approve" | "reject" | null
-  >(null)
+  const [confirmDelete, setConfirmDelete] = useState<ArticleRow | null>(null)
   const [busy, setBusy] = useState(false)
 
   const isReviewer = userRole === "reviewer"
@@ -168,27 +175,7 @@ export function ArticleActionsCell({ row }: { row: { original: ArticleRow } }) {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     variant="destructive"
-                    onClick={async () => {
-                      setBusy(true)
-                      try {
-                        const { error } = await api.api
-                          .orgs({ slug })
-                          .articles({ id: article.id })
-                          .delete()
-                        if (error) {
-                          toast.error(
-                            getErrorMessage(error) ?? "Gagal menghapus artikel"
-                          )
-                        } else {
-                          toast.success("Artikel berhasil dihapus")
-                          router.refresh()
-                        }
-                      } catch {
-                        toast.error("Terjadi kesalahan")
-                      } finally {
-                        setBusy(false)
-                      }
-                    }}
+                    onClick={() => setConfirmDelete(article)}
                   >
                     <Trash2 />
                     Hapus
@@ -199,6 +186,64 @@ export function ArticleActionsCell({ row }: { row: { original: ArticleRow } }) {
           </DropdownMenu>
         )}
       </div>
+
+      {/* Delete confirmation dialog */}
+      <Dialog
+        open={confirmDelete !== null}
+        onOpenChange={() => setConfirmDelete(null)}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Hapus Artikel</DialogTitle>
+            <DialogDescription>
+              Apakah Anda yakin ingin menghapus artikel{" "}
+              <span className="font-medium text-foreground">
+                {confirmDelete?.title}
+              </span>
+              ? Tindakan ini tidak dapat dibatalkan.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setConfirmDelete(null)}
+              disabled={busy}
+            >
+              Batal
+            </Button>
+            <Button
+              variant="destructive"
+              disabled={busy}
+              onClick={async () => {
+                if (!confirmDelete) return
+                setBusy(true)
+                try {
+                  const { error } = await api.api
+                    .orgs({ slug })
+                    .articles({ id: confirmDelete.id })
+                    .delete()
+                  if (error) {
+                    toast.error(
+                      getErrorMessage(error) ?? "Gagal menghapus artikel"
+                    )
+                  } else {
+                    toast.success("Artikel berhasil dihapus")
+                    setConfirmDelete(null)
+                    router.refresh()
+                  }
+                } catch {
+                  toast.error("Terjadi kesalahan")
+                } finally {
+                  setBusy(false)
+                }
+              }}
+            >
+              {busy ? <Spinner /> : null}
+              Hapus
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }

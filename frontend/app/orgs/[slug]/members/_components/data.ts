@@ -61,10 +61,10 @@ export const contributors: MemberRow[] = [
   { id: "M-001", name: "Budi Santoso", email: "budi@contoh.com", role: "Kontributor", type: "contributor", status: "active", articleCount: 12, defaultHonor: 150000, joinedAt: "2026-01-15T08:00:00Z" },
   { id: "M-002", name: "Ayu Lestari", email: "ayu@contoh.com", role: "Kontributor", type: "contributor", status: "active", articleCount: 8, defaultHonor: 120000, joinedAt: "2026-02-20T10:30:00Z" },
   { id: "M-003", name: "Dimas Ardianto", email: "dimas@contoh.com", role: "Kontributor", type: "contributor", status: "active", articleCount: 15, defaultHonor: 200000, joinedAt: "2026-01-05T09:00:00Z" },
-  { id: "M-004", name: "Sari Dewi", email: "sari@contoh.com", role: "Kontributor", type: "contributor", status: "inactive", articleCount: 3, defaultHonor: 100000, joinedAt: "2026-03-10T14:00:00Z" },
+  { id: "M-004", name: "Sari Dewi", email: "sari@contoh.com", role: "Kontributor", type: "contributor", status: "inactive", articleCount: 3, defaultHonor: 50000, joinedAt: "2026-03-10T14:00:00Z" },
   { id: "M-005", name: "Rudi Hermawan", email: "rudi@contoh.com", role: "Kontributor", type: "contributor", status: "active", articleCount: 6, defaultHonor: 130000, joinedAt: "2026-04-01T11:00:00Z" },
   { id: "M-006", name: "Fitriani Nurul", email: "fitri@contoh.com", role: "Kontributor", type: "contributor", status: "active", articleCount: 10, defaultHonor: 160000, joinedAt: "2026-02-01T07:30:00Z" },
-  { id: "M-007", name: "Hadi Prasetyo", email: "hadi@contoh.com", role: "Kontributor", type: "contributor", status: "inactive", articleCount: 1, defaultHonor: 100000, joinedAt: "2026-05-15T16:00:00Z" },
+  { id: "M-007", name: "Hadi Prasetyo", email: "hadi@contoh.com", role: "Kontributor", type: "contributor", status: "inactive", articleCount: 1, defaultHonor: 50000, joinedAt: "2026-05-15T16:00:00Z" },
   { id: "M-008", name: "Dewi Sartika", email: "dewi@contoh.com", role: "Kontributor", type: "contributor", status: "active", articleCount: 20, defaultHonor: 180000, joinedAt: "2025-11-01T08:00:00Z" },
 ]
 

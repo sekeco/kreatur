@@ -1,11 +1,12 @@
-# 📋 PRD — Kreatur v1.0 (MVP)
+# 📋 PRD — Kreatur (Production Beta)
 
 > **Dari naskah ke publikasi, rapi dalam satu ruang kerja.**
 >
 > Product Requirements Document — Frontend & UI.
 >
-> **Status:** MVP — Early Access (Free). Seluruh pengguna mendapatkan paket Free.
+> **Status:** Production Beta — Early Access (Free). Seluruh pengguna mendapatkan paket Free.
 > Monetisasi akan aktif setelah produk mencapai product-market fit.
+> **Semua label status dan UI menggunakan Bahasa Indonesia.** Kode internal (variable, API, database) tetap Bahasa Inggris.
 
 ---
 
@@ -42,7 +43,7 @@ Bayangkan seperti Trello/Asana untuk tim editorial, dengan workflow `Draft → S
 
 > **Semua pengguna adalah non-teknis. Aplikasi harus langsung dimengerti tanpa panduan.**
 
-### Fitur Utama (MVP)
+### Fitur Utama
 
 | Fitur                        | Deskripsi Singkat                                                                  |
 | ---------------------------- | ---------------------------------------------------------------------------------- |
@@ -113,12 +114,12 @@ Gunakan heading yang jelas, icon yang familiar, dan hindari jargon teknis.
 ✅ "Cari artikel..." ❌ "Query article records"
 ✅ "Kirim ke Reviewer" ❌ "Submit for Review"
 
-### 4.2 Mobile-first, tapi tetap enak di laptop
+### 4.2 Desktop-first, responsif untuk mobile
 
-- Mayoritas akses kontributor dari **HP Android**
+- Workflow utama (nulis, review, kelola) dilakukan di **laptop/desktop**
 - Semua halaman harus responsif — dari layar 360px sampai 1920px
-- Di HP: **satu kolom**, scroll vertikal, tombol gede
-- Di desktop: layout dashboard dengan sidebar navigasi
+- Di HP: sidebar collapsible, satu kolom, scroll vertikal
+- Di desktop: sidebar navigasi tetap, layout multi-kolom
 
 ### 4.3 Warna sebagai bahasa
 
@@ -151,7 +152,7 @@ Setiap aksi yang tidak bisa di-undo atau berdampak signifikan harus dikonfirmasi
 
 ---
 
-## 5. Ruang Lingkup MVP
+## 5. Ruang Lingkup Beta
 
 ### 5.1 Ruang Kerja dan Organisasi
 
@@ -168,7 +169,9 @@ Setiap aksi yang tidak bisa di-undo atau berdampak signifikan harus dikonfirmasi
 - Artikel dengan status: `DRAFT`, `PENDING_REVIEW`, `REVISION_REQUESTED`, `APPROVED`, `REJECTED`, `PUBLISHED`, `ARCHIVED`
 - Editor rich-text (TipTap), output **HTML**
 - Word count, kategori per ruang kerja, guideline (text/checklist)
-- Submit, assign reviewer, skor dan catatan review, request revision, approve/reject
+- Submit artikel → auto-assign ke `default_reviewer_id` (Owner sebagai default). Hanya Owner bisa mengubah default reviewer di Settings
+- Skor review ★ 1-5, catatan, keputusan (setujui/minta revisi/tolak)
+- Auto-publish threshold: skor >= N (default: 4, bisa diubah Owner di Settings) → artikel otomatis APPROVED
 - Riwayat aktivitas untuk setiap perubahan status
 - Dashboard per peran: artikel yang menunggu tindakan, status artikel, ringkasan progres
 
@@ -191,6 +194,8 @@ Setiap aksi yang tidak bisa di-undo atau berdampak signifikan harus dikonfirmasi
 
 ### 5.5 WordPress User Sync
 
+Sync terbatas untuk user dengan role **Kontributor** (bukan Editor/Reviewer/Owner/Finance).
+
 **WordPress → Kreatur:**
 
 - Tombol **Sync Now** menarik data dari WordPress (ID, username, email, display name)
@@ -201,26 +206,21 @@ Setiap aksi yang tidak bisa di-undo atau berdampak signifikan harus dikonfirmasi
 
 - User Kreatur eligible untuk di-push sebagai author WordPress jika:
   1. `email_verified = true`
-     Memiliki minimal 1 artikel `APPROVED` di ruang kerja terkait
+  2. Memiliki minimal 1 artikel `APPROVED` di ruang kerja terkait
 - Push membuat user WordPress baru via REST API dengan role `author`
-
-### 5.6 AI Suggestions
-
-- **Non-blocking:** Panggil OpenCode Go API di background, hasil tampilkan saat siap
-- **Tipe saran:** ringkasan, saran struktur/keterbacaan, cek guideline ruang kerja
-- AI hanya memberi **rekomendasi**; keputusan akhir tetap pada manusia
-- Per ruang kerja, Owner dapat menonaktifkan AI di pengaturan
 
 ### 5.7 Monetisasi dan Paket
 
 **Saat ini semua workspace menggunakan paket Free.** Tidak ada kartu. Gratis penuh selama masa early access.
 
-| Paket  |     Harga | Anggota | Artikel | Koneksi | AI  |
-| ------ | --------: | ------: | ------: | ------: | :-: |
-| Free   |       Rp0 |      10 |     100 |       1 | ✅  |
-| Mulai  |  Rp49.000 |      10 |     300 |       1 | ✅  |
-| Tumbuh | Rp149.000 |      30 |       ∞ |       3 | ✅  |
-| Studio | Rp399.000 |     100 |       ∞ |      10 | ✅  |
+| Paket  |     Harga | Anggota | Artikel | Koneksi |
+| ------ | --------: | ------: | ------: | ------: |
+| Free   |       Rp0 |      10 |     100 |       1 |
+| Mulai  |  Rp49.000 |      10 |     300 |       1 |
+| Tumbuh | Rp149.000 |      30 |       ∞ |       3 |
+| Studio | Rp399.000 |     100 |       ∞ |      10 |
+
+> ⚠️ **Catatan:** Plan belum di-enforce di kode. Semua workspace saat ini menggunakan paket Free tanpa batasan.
 
 ---
 
@@ -250,28 +250,22 @@ Setiap aksi yang tidak bisa di-undo atau berdampak signifikan harus dikonfirmasi
 └────────────────────────────────────────────────────┘
 ```
 
-### 6.2 Navigasi Mobile (Bottom Nav — HP)
-
-```
-┌────────────────────────┐
-│                        │
-│   [CONTENT AREA]       │
-│                        │
-├────┬──────┬──────┬─────┤
-│ 📊 │ 📝  │ 🔗  │ ⚙️ │
-│Dashboard│Artikel│Koneksi│Settings│
-└────┴──────┴──────┴─────┘
-```
+<!-- Mobile bottom navigation tidak diimplementasikan di MVP. Sidebar collapsible digunakan untuk semua ukuran layar. -->
 
 ### 6.3 Struktur Halaman
 
 | Halaman                    | URL                                 |
 | -------------------------- | ----------------------------------- |
-| Landing / Redirect         | `/`                                 |
-| Login                      | `/login`                            |
-| Register                   | `/register`                         |
+| Landing Page               | `/` (Hero section)                  |
+| Login                      | `/auth/signin`                      |
+| Register                   | `/auth/signup`                      |
 | Boarding (new user wizard) | `/boarding`                         |
-| Pilih Organisasi           | `/org/select`                       |
+| Forgot Password            | `/auth/forgot-password`             |
+| Reset Password             | `/auth/reset-password`              |
+| Verify Email               | `/auth/verify-email`                |
+| 2FA                        | `/auth/2fa`                         |
+| OAuth Callback             | `/auth/oauth-callback`              |
+| Invitation Link            | `/join/[slug]`                      |
 | Dashboard                  | `/orgs/[slug]/dashboard`            |
 | Daftar Artikel             | `/orgs/[slug]/articles`             |
 | Detail / Edit Artikel      | `/orgs/[slug]/articles/[id]`        |
@@ -283,28 +277,26 @@ Setiap aksi yang tidak bisa di-undo atau berdampak signifikan harus dikonfirmasi
 | Pengaturan — Umum          | `/orgs/[slug]/settings`             |
 | Pengaturan — Koneksi       | `/orgs/[slug]/settings/connection`  |
 | Pengaturan — Honor         | `/orgs/[slug]/settings/honor`       |
-| Invitation Link            | `/join/[slug]`                      |
-| Pengaturan Akun User       | `/dashboard/account`                |
-| Forgot Password            | `/forgot-password`                  |
-| Reset Password             | `/reset-password`                   |
+| Profil Saya                | `/orgs/[slug]/profile`              |
+| Peran & Hak Akses          | `/orgs/[slug]/roles`                |
 
 ---
 
 ## 7. Halaman & Komponen — Spesifik
 
-### 7.1 Landing / Redirect `/`
+### 7.1 Landing Page `/`
 
-- Cek session user:
-  - Not authenticated → redirect `/login`
-  - Authenticated, no org → redirect `/org/select`
-  - Authenticated, has org → redirect `/orgs/[slug]/dashboard`
+- **Hero section** — value proposition, ilustrasi, CTA "Mulai Sekarang"
+- Jika user sudah login dengan session aktif: redirect ke `/orgs/[slug]/dashboard`
+- Jika user sudah login tapi belum punya org: redirect ke `/boarding`
 
-### 7.2 Login `/login`
+### 7.2 Login `/auth/signin`
 
 - Form email + password
 - Tombol "Masuk dengan Google"
-- Link ke register dan forgot password
-- Setelah login sukses → redirect ke `/` (biar middleware yang handle)
+- Checkbox "Ingat saya selama 30 hari"
+- Link ke register, lupa password
+- Setelah login sukses → detect org → redirect ke dashboard atau boarding
 
 ### 7.3 Boarding `/boarding`
 
@@ -335,43 +327,49 @@ Multi-step wizard untuk pengguna baru:
 
 ### 7.5 Daftar Artikel `/orgs/[slug]/articles`
 
-- Tabel dengan kolom: Judul, Status (badge warna), Kategori, Penulis, Tanggal Update
-- Filter: dropdown status + search bar (postgreSQL ILIKE)
-- Sorting: updatedAt
-- Klik row → detail artikel
+- Tabel dengan kolom: Judul, Status (badge warna + label Indonesia), Kategori, Penulis, Honor, Tanggal Update
+- Filter: dropdown status + search bar
+- Sorting: Terbaru, Terlama, Judul A-Z, Honor Tertinggi
+- Klik row → detail artikel (kontributor) / review (editorial)
 - Tombol "Tambah Artikel" → `/orgs/[slug]/articles/new`
-- Batch actions: Archive selected
-- **Empty state:** "Belum ada artikel. Tulis artikel pertama Anda!"
+- **Tidak ada batch actions / export di MVP** — akan jadi fitur pelaporan terpisah
+- **Empty state:** "Belum ada artikel. Tulis artikel pertama Anda!" + CTA tombol
 
 ### 7.6 Detail / Edit Artikel `/orgs/[slug]/articles/[id]`
 
 - **Form:**
-  - Judul (input text)
+  - Judul (input text) — label Indonesia "Judul Artikel"
   - Konten — rich-text editor (TipTap), output HTML
-  - Excerpt / ringkasan
-  - Slug — auto-generate dari judul (bisa diedit)
-  - Kategori — multi-select
+  - Cover gambar — URL input
+  - Slug — auto-generate dari judul
+  - Kategori — single select
   - Penulis — auto dari user login
 - **Tombol aksi (tergantung role & status):**
-  - DRAFT: "Simpan Draft", "Kirim ke Review"
-  - PENDING_REVIEW: "Tarik dari Review" (kontributor), "Review" (reviewer)
-  - REVISION_REQUESTED: "Simpan Revisi", "Kirim Ulang"
-  - APPROVED: "Terbitkan ke WordPress" (editor)
-  - PUBLISHED: "Update di WordPress"
-- **Auto-save draft** setiap 30 detik
+  - DRAFT (kontributor): "Simpan Draft", "Kirim ke Review" — wajib pilih reviewer
+  - REVISION_REQUESTED (kontributor): "Simpan Revisi", "Kirim Ulang"
+  - APPROVED (editor): "Terbitkan ke WordPress"
+- **Auto-save draft** — simpan otomatis secara periodik saat ada perubahan
+  - Interval: setiap 60 detik (lebih efisien dari 30 detik untuk mengurangi beban server)
+  - Indikator status: "Menyimpan..." / "Tersimpan" / "Gagal menyimpan"
+  - Hanya aktif ketika ada perubahan (`isDirty`)
 - **Word count** — live counter di bawah editor
+- **Quality checklist** — 5 item (judul, kategori, word count 500-1000, konten, cover)
+- **Breadcrumb** — Artikel > [Judul]
 - **Activity log** — timeline riwayat perubahan
+- **Beforeunload guard** — peringatan jika ada perubahan belum disimpan
 
 ### 7.7 Review Artikel `/orgs/[slug]/articles/[id]/review`
 
 - **Dua panel:**
-  - Kiri: artikel read-only
+  - Kiri: artikel read-only (dapat di-toggle untuk edit)
   - Kanan: panel review
 - **Form Review:**
-  - Skor (1-5) — star rating
+  - Skor — star rating 1-5 (komponen DiceUI `Rating`: https://diceui.com/docs/components/base/rating)
   - Catatan (textarea)
-  - Keputusan: Approve / Request Revision / Reject
+  - Keputusan: Setujui / Minta Revisi / Tolak (dengan alasan wajib jika tolak)
 - Riwayat review sebelumnya (accordion)
+- Auto-publish threshold: jika skor >= 4, artikel otomatis APPROVED
+- Breadcrumb: Artikel > [Judul] > Review
 - Notifikasi ke kontributor saat review selesai
 
 ### 7.8 Kategori `/orgs/[slug]/categories`
@@ -419,16 +417,21 @@ Multi-step wizard untuk pengguna baru:
 
 ### 7.12 Settings `/orgs/[slug]/settings`
 
-- **Profil Workspace:** Nama, slug, logo, deskripsi
-- **AI Toggle:** Enable/disable AI suggestions
+Settings memiliki sub-halaman terpisah (feature-based):
 
-### 7.13 Pengaturan Akun `/dashboard/account`
+- **`/orgs/[slug]/settings`** — Profil workspace (nama, slug, deskripsi)
+- **`/orgs/[slug]/settings/honor`** — Aturan honor (nominal per artikel, threshold payout)
+- **`/orgs/[slug]/settings/review`** — Aturan review (default reviewer, default approve score)
+- **`/orgs/[slug]/settings/preferences`** — Preferensi workspace (zona waktu, bahasa, dll)
 
-- Profil: Nama, Email
-- Ganti password
-- Akun tertaut (Google/GitHub OAuth)
-- Sesi aktif (lihat & revoke)
-- Hapus akun (zona berbahaya — konfirmasi email)
+### 7.13 Profil Saya `/orgs/[slug]/profile`
+
+- **Informasi Akun:** Nama, Email
+- **Preferensi Payout:** Bank, nomor rekening, nama pemilik rekening
+- **Keamanan:** Ganti password
+- **Two-Factor Authentication (2FA):** Setup TOTP authenticator
+- **Sesi Aktif:** Lihat & revoke sesi
+- **Zona Berbahaya:** Hapus akun (konfirmasi email)
 
 ---
 
@@ -520,18 +523,31 @@ Dapat juga via link langsung: `/join/{org-slug}`
 - Retry: 3x attempt, delay 30 detik
 - Notifikasi: sukses/gagal ke editor
 
-### 9.3 User Sync
+### 9.3 User Sync (Kontributor Only)
 
-- **Import:** Pull users dari WordPress → cek email → buat akun Kreatur baru atau link via WpUserLink
-- **Push:** Push user Kreatur ke WordPress (syarat: email_verified + minimal 1 APPROVED article)
-- Tombol **Sync Now** di halaman koneksi
-- Background sync saat boarding
+Sync terbatas untuk user dengan role **Kontributor**.
+
+**WordPress → Kreatur (Import):**
+
+- Tombol **Sync Now** menarik data dari WordPress (ID, username, email, display name)
+- User WordPress dengan role `author` atau `contributor` otomatis dibuatkan akun Kreatur (by email) atau di-link jika sudah ada
+- User non-kontributor (admin, editor) dilewati
+- User yang dihapus dari WordPress ditandai `is_orphaned = true` (data tetap dipertahankan)
+
+**Kreatur → WordPress (Push):**
+
+- User Kreatur dengan role Kontributor eligible untuk di-push sebagai author WordPress jika:
+  1. `email_verified = true`
+  2. Memiliki minimal 1 artikel `APPROVED` di ruang kerja terkait
+- Push membuat user WordPress baru via REST API dengan role `author`
 
 ---
 
 ## 10. Prioritas Implementasi
 
-### P0 — Wajib untuk MVP (Fungsionalitas inti)
+> ℹ️ Untuk task detail dan status terbaru, lihat [TODO.md](./TODO.md).
+
+### P0 — Critical (Wajib untuk Production Beta)
 
 | #   | Item                                                | Bagian           |
 | --- | --------------------------------------------------- | ---------------- |
@@ -541,8 +557,9 @@ Dapat juga via link langsung: `/join/{org-slug}`
 | 4   | Workflow status (Draft → Submit → Review → Approve) | Backend/Frontend |
 | 5   | Review system (skor, catatan)                       | Backend/Frontend |
 | 6   | Dashboard widget stats                              | Backend/Frontend |
+| 7   | Auto-save draft                                     | Frontend         |
 
-### P1 — Penting untuk MVP (Kelengkapan)
+### P1 — High (Penting untuk Beta Launch)
 
 | #   | Item                          | Bagian           |
 | --- | ----------------------------- | ---------------- |
@@ -553,19 +570,19 @@ Dapat juga via link langsung: `/join/{org-slug}`
 | 5   | Undang anggota (email + link) | Backend/Frontend |
 | 6   | Role management               | Backend/Frontend |
 | 7   | Honor & payout rules          | Backend/Frontend |
+| 8   | WordPress user sync (2 arah)  | Backend/Frontend |
+| 9   | Landing page Hero section     | Frontend         |
 
-### P2 — Enhancement (Setelah inti jalan)
+### P2 — Medium (Setelah Beta Stabil)
 
-| #   | Item                              | Bagian           |
-| --- | --------------------------------- | ---------------- |
-| 1   | WordPress user sync (2 arah)      | Backend/Frontend |
-| 2   | Payout request & approval flow    | Backend/Frontend |
-| 3   | AI suggestions                    | Backend/Frontend |
-| 4   | Plan enforcement + read-only mode | Backend/Frontend |
-| 5   | Dark mode                         | Frontend         |
-| 6   | Export / laporan                  | Backend/Frontend |
-| 7   | Search (PostgreSQL FTS)           | Backend/Frontend |
-| 8   | Notifikasi email                  | Backend          |
+| #   | Item                               | Bagian           |
+| --- | ---------------------------------- | ---------------- |
+| 1   | Plan enforcement + read-only mode  | Backend/Frontend |
+| 2   | Dark mode                          | Frontend         |
+| 3   | Search (PostgreSQL FTS)            | Backend/Frontend |
+| 4   | Notifikasi email                   | Backend          |
+| 5   | Star rating (DiceUI)               | Frontend         |
+| 6   | Laporan & audit (pengganti export) | Backend/Frontend |
 
 ---
 

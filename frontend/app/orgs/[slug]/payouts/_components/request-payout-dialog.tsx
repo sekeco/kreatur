@@ -186,7 +186,8 @@ export function RequestPayoutDialog({
           <div className="space-y-3">
             <h4 className="text-sm font-medium">Data Bank</h4>
             <p className="text-xs text-muted-foreground">
-              Data bank diisi otomatis dari profil.{" "}
+              Data bank diisi otomatis dari profil. Isi di halaman profil jika
+              belum ada.{" "}
               <a
                 href={`/orgs/${slug}/profile`}
                 className="underline underline-offset-2 hover:text-foreground"
@@ -264,7 +265,7 @@ export function RequestPayoutDialog({
                     >
                       <span className="flex-1 truncate">{article.title}</span>
                       <span className="text-muted-foreground tabular-nums">
-                        Rp{article.honor?.toLocaleString("id-ID")}
+                        Rp{(article.honor ?? 0).toLocaleString("id-ID")}
                       </span>
                     </label>
                   </div>

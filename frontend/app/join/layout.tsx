@@ -12,7 +12,7 @@ export default function JoinLayout({
       <div className="grid h-dvh justify-center p-2 lg:grid-cols-2">
         {/* Brand Panel — Desktop */}
         <div className="relative order-2 hidden h-full rounded-3xl bg-muted lg:flex">
-          <div className="absolute top-10 space-y-4 px-10">
+          <div className="absolute top-10 space-y-4 px-4 lg:px-10">
             <LogoWithText
               size={32}
               className="gap-4 text-3xl [&>span]:font-normal!"
@@ -22,7 +22,7 @@ export default function JoinLayout({
             </p>
           </div>
 
-          <div className="absolute bottom-10 flex w-full justify-between px-10">
+          <div className="absolute bottom-10 flex w-full justify-between px-4 lg:px-10">
             <div className="flex-1 space-y-1">
               <h2 className="font-medium">Kelola konten lebih mudah</h2>
               <p className="text-sm">

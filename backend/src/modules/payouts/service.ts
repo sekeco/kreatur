@@ -33,7 +33,7 @@ export async function upsertRules(workspaceId: string, data: {
     data: {
       id: crypto.randomUUID(),
       workspaceId,
-      defaultHonor: data.defaultHonor ?? 100000,
+      defaultHonor: data.defaultHonor ?? 50000,
       minPayout: data.minPayout ?? 50000,
     } as any,
   })

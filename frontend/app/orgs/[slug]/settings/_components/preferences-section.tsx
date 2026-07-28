@@ -1,10 +1,11 @@
 "use client"
 
 import * as React from "react"
-import { Copy, ExternalLink, Save } from "lucide-react"
+import { Copy, ExternalLink, Save, UserCheck } from "lucide-react"
 import Link from "next/link"
 import { toast } from "sonner"
 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -23,10 +24,28 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
 import { api } from "@/lib/eden-client"
-import { getErrorMessage } from "@/lib/utils"
+import { getErrorMessage, getInitials } from "@/lib/utils"
 import type { PreferencesData } from "./types"
+
+interface MemberOption {
+  id: string
+  role: string
+  user: {
+    id: string
+    name: string
+    email: string
+    image?: string | null
+  }
+}
 
 interface Props {
   preferences: PreferencesData
@@ -34,9 +53,17 @@ interface Props {
 }
 
 export function PreferencesSection({ preferences, slug }: Props) {
+  // Convert 0-100 from API to 1-5 for display
   const [defaultScoreForPublish, setDefaultScoreForPublish] = React.useState(
-    preferences.defaultScoreForPublish?.toString() ?? ""
+    preferences.defaultScoreForPublish
+      ? Math.round(preferences.defaultScoreForPublish / 20).toString()
+      : ""
   )
+  const [defaultReviewerId, setDefaultReviewerId] = React.useState(
+    preferences.defaultReviewerId ?? ""
+  )
+  const [members, setMembers] = React.useState<MemberOption[]>([])
+  const [userRole, setUserRole] = React.useState<string | null>(null)
   const [publicJoinEnabled, setPublicJoinEnabled] = React.useState(
     preferences.publicJoinEnabled
   )
@@ -50,25 +77,61 @@ export function PreferencesSection({ preferences, slug }: Props) {
 
   React.useEffect(() => {
     setDefaultScoreForPublish(
-      preferences.defaultScoreForPublish?.toString() ?? ""
+      preferences.defaultScoreForPublish
+        ? Math.round(preferences.defaultScoreForPublish / 20).toString()
+        : ""
     )
+    setDefaultReviewerId(preferences.defaultReviewerId ?? "")
     setPublicJoinEnabled(preferences.publicJoinEnabled)
   }, [preferences])
+
+  // Fetch members + current user role
+  React.useEffect(() => {
+    if (!slug) return
+    api.api
+      .orgs({ slug })
+      .members.get()
+      .then(({ data }) => {
+        if (data?.success) {
+          const raw = data.data
+          const list = Array.isArray(raw) ? raw : (raw?.members ?? [])
+          setMembers(
+            list.filter((m: MemberOption) =>
+              ["reviewer", "editor", "owner"].includes(m.role)
+            )
+          )
+        }
+      })
+    // Get current user role
+    import("@/lib/auth-client").then(({ authClient }) => {
+      authClient.organization.getActiveMemberRole({}).then(({ data }) => {
+        if (data?.role) {
+          const raw = Array.isArray(data.role) ? data.role[0] : data.role
+          setUserRole(
+            raw.toLowerCase() === "member" ? "contributor" : raw.toLowerCase()
+          )
+        }
+      })
+    })
+  }, [slug])
 
   async function handleSave() {
     const score =
       defaultScoreForPublish.trim() !== ""
         ? Number(defaultScoreForPublish)
         : null
-    if (score !== null && (isNaN(score) || score < 0 || score > 100)) {
-      toast.error("Skor minimal publish harus antara 0–100")
+    if (score !== null && (isNaN(score) || score < 1 || score > 5)) {
+      toast.error("Skor minimal publish harus antara 1–5")
       return
     }
+    // Convert 1-5 to 0-100 for API
+    const apiScore = score !== null ? score * 20 : null
 
     setSaving(true)
     try {
       const { error } = await api.api.orgs({ slug }).settings.preferences.put({
-        defaultScoreForPublish: score,
+        defaultScoreForPublish: apiScore,
+        defaultReviewerId: defaultReviewerId || null,
         publicJoinEnabled,
       })
       if (error) {
@@ -111,18 +174,58 @@ export function PreferencesSection({ preferences, slug }: Props) {
             <Input
               id="default-score"
               type="number"
-              min={0}
-              max={100}
-              placeholder="Kosongkan untuk nonaktif"
+              min={1}
+              max={5}
+              step={1}
+              placeholder="Contoh: 4"
               value={defaultScoreForPublish}
               onChange={(e) => setDefaultScoreForPublish(e.target.value)}
             />
             <FieldDescription>
-              Artikel dengan skor review di atas nilai ini akan otomatis
-              diterbitkan. Biarkan kosong jika tidak ingin menggunakan fitur
-              ini.
+              Artikel dengan skor review ≥ nilai ini akan otomatis diterbitkan.
+              Nilai 1–5 (★), kosongkan untuk nonaktif. Default: 4
             </FieldDescription>
           </Field>
+
+          {userRole === "owner" && (
+            <Field>
+              <FieldLabel htmlFor="default-reviewer">
+                Reviewer Default
+              </FieldLabel>
+              <Select
+                value={defaultReviewerId}
+                onValueChange={setDefaultReviewerId}
+              >
+                <SelectTrigger id="default-reviewer" className="w-full">
+                  <SelectValue placeholder="Pilih reviewer default..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">Otomatis (Owner)</SelectItem>
+                  {members.map((m) => (
+                    <SelectItem key={m.id} value={m.user.id}>
+                      <span className="flex items-center gap-2">
+                        <Avatar className="size-5">
+                          <AvatarImage
+                            src={m.user?.image ?? undefined}
+                            alt={m.user?.name}
+                          />
+                          <AvatarFallback className="text-[8px]">
+                            {getInitials(m.user?.name ?? "")}
+                          </AvatarFallback>
+                        </Avatar>
+                        {m.user?.name}
+                      </span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FieldDescription>
+                Reviewer yang akan ditugaskan secara otomatis saat kontributor
+                submit artikel. Pilih kosong untuk menggunakan Owner sebagai
+                default.
+              </FieldDescription>
+            </Field>
+          )}
         </FieldGroup>
         <Field>
           <FieldLabel>Tautan Bergabung Publik</FieldLabel>

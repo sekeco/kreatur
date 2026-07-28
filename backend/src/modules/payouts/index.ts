@@ -9,7 +9,7 @@ export const payoutsRouter = new Elysia()
   // GET /api/orgs/:slug/payout-rules — aturan honor
   .get("/api/orgs/:slug/payout-rules", async ({ organization }) => {
     const rules = await payoutService.getRules(organization.id)
-    return ok(rules ?? { defaultHonor: 100000, minPayout: 50000 })
+    return ok(rules ?? { defaultHonor: 50000, minPayout: 50000 })
   }, { authOrg: true })
 
   // PUT /api/orgs/:slug/payout-rules — update aturan honor

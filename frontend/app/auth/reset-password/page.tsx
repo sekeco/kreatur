@@ -69,7 +69,7 @@ function ResetPasswordForm() {
   if (!token) {
     return (
       <>
-        <div className="mx-auto flex w-full flex-col justify-center space-y-8 sm:w-87.5">
+        <div className="mx-auto flex w-full flex-col justify-center space-y-8 px-4 sm:w-sm">
           <div className="space-y-2 text-center">
             <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-destructive/10">
               <KeyRound className="size-6 text-destructive" />
@@ -88,7 +88,7 @@ function ResetPasswordForm() {
           </Link>
         </div>
 
-        <div className="absolute bottom-5 flex w-full justify-between px-10">
+        <div className="absolute bottom-5 flex w-full justify-between px-4 lg:px-10">
           <div className="text-sm">{APP_CONFIG.copyright}</div>
           <div className="flex items-center gap-1 text-sm">
             <Globe className="size-4 text-muted-foreground" />
@@ -101,7 +101,7 @@ function ResetPasswordForm() {
 
   return (
     <>
-      <div className="mx-auto flex w-full flex-col justify-center space-y-8 sm:w-87.5">
+      <div className="mx-auto flex w-full flex-col justify-center space-y-8 px-4 sm:w-sm">
         <div className="space-y-2 text-center">
           <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-muted">
             <KeyRound className="size-6 text-muted-foreground" />
@@ -170,7 +170,7 @@ function ResetPasswordForm() {
         </form>
       </div>
 
-      <div className="absolute bottom-5 flex w-full justify-between px-10">
+      <div className="absolute bottom-5 flex w-full justify-between px-4 lg:px-10">
         <div className="text-sm">{APP_CONFIG.copyright}</div>
         <div className="flex items-center gap-1 text-sm">
           <Globe className="size-4 text-muted-foreground" />
