@@ -55,6 +55,6 @@ export const uploadRouter = new Elysia()
   }, {
     auth: true,
     body: t.Object({
-      file: t.File({ type: "image", maxSize: "5m" }),
+      file: t.File({ maxSize: "512k" }),
     }),
   })

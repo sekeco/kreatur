@@ -22,8 +22,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+import { FieldLabel } from "@/components/ui/field"
 import { Separator } from "@/components/ui/separator"
 import type { WhiteLabelData } from "./types"
 
@@ -36,9 +35,6 @@ interface Props {
 export function WhiteLabelSection({ whiteLabel, slug, onUpdated }: Props) {
   const [logoDark, setLogoDark] = React.useState(whiteLabel.logoDark ?? "")
   const [logoLight, setLogoLight] = React.useState(whiteLabel.logoLight ?? "")
-  const [customDomain, setCustomDomain] = React.useState(
-    whiteLabel.customDomain ?? ""
-  )
   const [saving, setSaving] = React.useState(false)
   const [uploading, setUploading] = React.useState<"dark" | "light" | null>(
     null
@@ -46,15 +42,12 @@ export function WhiteLabelSection({ whiteLabel, slug, onUpdated }: Props) {
   const [dialogOpen, setDialogOpen] = React.useState(false)
   const [dialogType, setDialogType] = React.useState<"dark" | "light">("light")
 
-  const FRONTEND_URL =
-    process.env.NEXT_PUBLIC_FRONTEND_URL ?? "https://kreatur.sekeco.work"
   const BACKEND_URL =
     process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8000"
 
   React.useEffect(() => {
     setLogoDark(whiteLabel.logoDark ?? "")
     setLogoLight(whiteLabel.logoLight ?? "")
-    setCustomDomain(whiteLabel.customDomain ?? "")
   }, [whiteLabel])
 
   async function handleSave() {
@@ -69,7 +62,6 @@ export function WhiteLabelSection({ whiteLabel, slug, onUpdated }: Props) {
           body: JSON.stringify({
             logoDark: logoDark.trim() || null,
             logoLight: logoLight.trim() || null,
-            customDomain: customDomain.trim() || null,
           }),
         }
       )
@@ -96,13 +88,15 @@ export function WhiteLabelSection({ whiteLabel, slug, onUpdated }: Props) {
   async function handleUpload() {
     const input = document.createElement("input")
     input.type = "file"
-    input.accept = "image/png,image/jpeg,image/svg+xml"
+    input.accept = "image/png,image/svg+xml"
     input.onchange = async () => {
       const file = input.files?.[0]
       if (!file) return
 
-      setUploading(dialogType)
-      setDialogOpen(false)
+      if (file.size > 512 * 1024) {
+        toast.error("Ukuran file maksimal 512KB")
+        return
+      }
       try {
         const formData = new FormData()
         formData.append("file", file)
@@ -133,7 +127,6 @@ export function WhiteLabelSection({ whiteLabel, slug, onUpdated }: Props) {
                 dialogType === "dark"
                   ? logoLight.trim() || null
                   : logoDark.trim() || null,
-              customDomain: customDomain.trim() || null,
             }),
           }
         )
@@ -175,8 +168,8 @@ export function WhiteLabelSection({ whiteLabel, slug, onUpdated }: Props) {
           <h4 className="text-sm leading-none font-medium">Logo</h4>
           <p className="text-xs text-muted-foreground">
             Unggah logo untuk tampilan terang (light mode) dan gelap (dark
-            mode). Format: PNG, JPG, atau SVG. Maks. 5MB. Ukuran terbaik: 180x32
-            piksel (lebar x tinggi).
+            mode). Format: <strong>PNG</strong> atau <strong>SVG</strong>. Maks.{" "}
+            <strong>512KB</strong>. Ukuran terbaik: 180x32 piksel.
           </p>
 
           {/* Light Mode Logo */}
@@ -290,66 +283,31 @@ export function WhiteLabelSection({ whiteLabel, slug, onUpdated }: Props) {
 
         <Separator />
 
-        {/* ─── Domain Kustom ────────────────────────────────────── */}
+        {/* ─── Domain Kustom (invitation-only) ──────────────────── */}
         <div className="space-y-4">
           <h4 className="text-sm leading-none font-medium">Domain Kustom</h4>
-          <p className="text-xs text-muted-foreground">
-            Gunakan domain Anda sendiri untuk mengakses ruang kerja ini.
-          </p>
-
-          <Field>
-            <FieldLabel htmlFor="custom-domain">Domain</FieldLabel>
-            <Input
-              id="custom-domain"
-              value={customDomain}
-              onChange={(e) => setCustomDomain(e.target.value)}
-              placeholder="kreatur.kustom.com"
-            />
-          </Field>
-
-          {customDomain && (
-            <Alert>
-              <AlertTitle>Cara Mengatur DNS</AlertTitle>
-              <AlertDescription className="space-y-3">
-                <p>
-                  Agar domain kustom Anda berfungsi, buka panel penyedia domain
-                  Anda dan tambahkan CNAME record berikut:
-                </p>
-
-                <div className="rounded-md border bg-muted p-3 font-mono text-xs">
-                  <table className="w-full text-left">
-                    <thead>
-                      <tr className="text-muted-foreground">
-                        <th className="pr-6 pb-1 font-medium">Tipe</th>
-                        <th className="pr-6 pb-1 font-medium">Nama</th>
-                        <th className="pb-1 font-medium">Nilai</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td className="pr-6">CNAME</td>
-                        <td className="pr-6">{customDomain.split(".")[0]}</td>
-                        <td>{FRONTEND_URL.replace("https://", "")}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-
-                <p>
-                  Setelah record ditambahkan, propagasi DNS membutuhkan waktu
-                  beberapa menit hingga 24 jam.
-                </p>
-              </AlertDescription>
-            </Alert>
-          )}
+          <Alert>
+            <AlertTitle>Fitur dalam tahap terbatas</AlertTitle>
+            <AlertDescription>
+              Fitur domain kustom saat ini hanya tersedia untuk pengguna
+              undangan. Jika Anda ingin mengaktifkannya, hubungi{" "}
+              <a
+                href="mailto:info@sekeco.work"
+                className="font-medium underline underline-offset-4"
+              >
+                info@sekeco.work
+              </a>
+              .
+            </AlertDescription>
+          </Alert>
         </div>
       </CardContent>
-      <CardFooter className="border-t px-6 py-4">
+      {/*<CardFooter className="border-t px-6 py-4">
         <Button onClick={handleSave} disabled={saving}>
           <Save data-icon="inline-start" />
           {saving ? "Menyimpan..." : "Simpan Perubahan"}
         </Button>
-      </CardFooter>
+      </CardFooter>*/}
     </Card>
   )
 }

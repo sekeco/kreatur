@@ -2,6 +2,7 @@ import { Elysia } from "elysia"
 import { cors } from "@elysiajs/cors"
 import { authGuard } from "./modules/auth-guard"
 import { betterAuthPlugin } from "./modules/auth-plugin"
+import { isOriginAllowed } from "./lib/cors-origins"
 import { connectionsRouter } from "./modules/connections"
 import { articlesRouter } from "./modules/articles"
 import { categoriesRouter } from "./modules/categories"
@@ -20,7 +21,15 @@ const FRONTEND_URL = process.env.FRONTEND_URL ?? "http://localhost:3000"
 const STORAGE_DIR = process.env.UPLOAD_DIR ?? "../storage"
 
 export const app = new Elysia()
-  .use(cors({ origin: FRONTEND_URL, credentials: true, allowedHeaders: ["Content-Type", "Authorization", "x-api-key"] }))
+  .use(cors({
+    origin: (request: Request) => {
+      const origin = request.headers.get("origin")
+      if (!origin) return false
+      return isOriginAllowed(origin)
+    },
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization", "x-api-key"],
+  }))
   .use(betterAuthPlugin)
   .use(authGuard)
   .get("/", () => ({ name: "Kreatur API", version: "1.0.0", status: "ok" }))
@@ -43,7 +52,22 @@ export const app = new Elysia()
     const file = Bun.file(filepath)
     const exists = await file.exists()
     if (!exists) return new Response("Not Found", { status: 404 })
-    return new Response(file)
+
+    // Set Content-Type berdasarkan ekstensi file
+    const ext = filename.split(".").pop()?.toLowerCase() ?? ""
+    const mime: Record<string, string> = {
+      png: "image/png",
+      jpg: "image/jpeg",
+      jpeg: "image/jpeg",
+      gif: "image/gif",
+      webp: "image/webp",
+      svg: "image/svg+xml",
+    }
+    const contentType = mime[ext] ?? "application/octet-stream"
+
+    return new Response(file, {
+      headers: { "Content-Type": contentType },
+    })
   })
 
 export type App = typeof app

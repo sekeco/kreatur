@@ -15,7 +15,15 @@ export const auth = betterAuth({
   appName: "Kreatur",
   baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:8000",
   database: zenstackAdapter(db, { provider: "postgresql" }),
-  trustedOrigins: [FRONTEND_URL, "http://localhost:3000", "http://localhost:8000"],
+  trustedOrigins: [
+    FRONTEND_URL,
+    "http://localhost:3000",
+    "http://localhost:8000",
+    ...(process.env.CORS_ORIGINS ?? "")
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean),
+  ],
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
