@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { CheckCircle2, Mail, Send, XCircle } from "lucide-react"
+import { Camera, CheckCircle2, Mail, Send, Upload, XCircle } from "lucide-react"
 import { toast } from "sonner"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -26,8 +26,12 @@ import {
 } from "@/components/ui/dialog"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { authClient } from "@/lib/auth-client"
-import { api } from "@/lib/eden-client"
 import { getErrorMessage, getInitials } from "@/lib/utils"
 import type { ProfileData } from "./types"
 import {
@@ -49,20 +53,33 @@ export function AccountInfoSection({ data, slug, onUpdated }: Props) {
   const [newEmail, setNewEmail] = React.useState("")
   const [sendingVerification, setSendingVerification] = React.useState(false)
   const [changingEmail, setChangingEmail] = React.useState(false)
+  const [avatarUploading, setAvatarUploading] = React.useState(false)
+  const [avatarUrl, setAvatarUrl] = React.useState(data.user.image ?? "")
+  const [avatarDialogOpen, setAvatarDialogOpen] = React.useState(false)
 
   React.useEffect(() => {
     setName(data.user.name)
-  }, [data.user.name])
+    setAvatarUrl(data.user.image ?? "")
+  }, [data.user.name, data.user.image])
 
   async function handleSave() {
     if (!name.trim()) return
     setSaving(true)
     try {
-      const { error } = await api.api
-        .orgs({ slug })
-        .profile.put({ name: name.trim() })
-      if (error) {
-        toast.error(getErrorMessage(error) ?? "Gagal menyimpan profil")
+      const res = await fetch(
+        `${
+          process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8000"
+        }/api/orgs/${slug}/profile`,
+        {
+          method: "PUT",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: name.trim() }),
+        }
+      )
+      const json = await res.json()
+      if (!json.success) {
+        toast.error(json.error ?? "Gagal menyimpan profil")
       } else {
         toast.success("Profil berhasil diperbarui!")
         onUpdated()
@@ -117,6 +134,56 @@ export function AccountInfoSection({ data, slug, onUpdated }: Props) {
     }
   }
 
+  async function handleAvatarUpload(file: File) {
+    setAvatarUploading(true)
+    try {
+      // Upload file
+      const formData = new FormData()
+      formData.append("file", file)
+
+      const uploadRes = await fetch(
+        `${
+          process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8000"
+        }/api/upload/avatar`,
+        { method: "POST", credentials: "include", body: formData }
+      )
+      const uploadJson = await uploadRes.json()
+      if (!uploadJson.success) {
+        toast.error(uploadJson.error ?? "Gagal mengunggah avatar")
+        return
+      }
+
+      const url = uploadJson.data.url
+
+      // Update avatar via API
+      const avatarRes = await fetch(
+        `${
+          process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8000"
+        }/api/orgs/${slug}/profile/avatar`,
+        {
+          method: "PUT",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ image: url }),
+        }
+      )
+      const avatarJson = await avatarRes.json()
+      if (!avatarJson.success) {
+        toast.error(avatarJson.error ?? "Gagal memperbarui avatar")
+        return
+      }
+
+      setAvatarUrl(url)
+      toast.success("Foto profil berhasil diperbarui!")
+      setAvatarDialogOpen(false)
+      onUpdated()
+    } catch {
+      toast.error("Terjadi kesalahan")
+    } finally {
+      setAvatarUploading(false)
+    }
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -124,6 +191,85 @@ export function AccountInfoSection({ data, slug, onUpdated }: Props) {
         <CardDescription>Data diri dan verifikasi akun Anda.</CardDescription>
       </CardHeader>
       <CardContent>
+        <div className="mb-6 flex items-center gap-4">
+          <div className="relative">
+            <Avatar className="size-16">
+              <AvatarImage src={avatarUrl || undefined} alt={data.user.name} />
+              <AvatarFallback className="text-lg">
+                {getInitials(data.user.name)}
+              </AvatarFallback>
+            </Avatar>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className="absolute -right-1 -bottom-1 size-7 rounded-full"
+                  onClick={() => setAvatarDialogOpen(true)}
+                >
+                  <Camera className="size-3.5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Ubah foto profil</TooltipContent>
+            </Tooltip>
+          </div>
+          <div>
+            <p className="font-medium">{data.user.name}</p>
+            <p className="text-sm text-muted-foreground">{data.user.email}</p>
+          </div>
+        </div>
+
+        <Dialog open={avatarDialogOpen} onOpenChange={setAvatarDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Ubah Foto Profil</DialogTitle>
+              <DialogDescription>
+                Pilih file gambar untuk foto profil Anda.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex flex-col items-center gap-4">
+              <Avatar className="size-24">
+                <AvatarImage
+                  src={avatarUrl || undefined}
+                  alt={data.user.name}
+                />
+                <AvatarFallback className="text-2xl">
+                  {getInitials(data.user.name)}
+                </AvatarFallback>
+              </Avatar>
+
+              <div className="flex w-full flex-col gap-2">
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  disabled={avatarUploading}
+                  onClick={() => {
+                    const input = document.createElement("input")
+                    input.type = "file"
+                    input.accept = "image/png,image/jpeg,image/jpg,image/webp"
+                    input.onchange = async () => {
+                      const file = input.files?.[0]
+                      if (file) await handleAvatarUpload(file)
+                    }
+                    input.click()
+                  }}
+                >
+                  <Upload data-icon="inline-start" />
+                  {avatarUploading ? "Mengunggah..." : "Pilih Gambar"}
+                </Button>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setAvatarDialogOpen(false)}
+              >
+                Tutup
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
         <FieldGroup>
           <Field>
             <FieldLabel htmlFor="profile-name">Nama</FieldLabel>

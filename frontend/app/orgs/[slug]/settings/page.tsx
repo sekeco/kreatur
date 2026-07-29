@@ -5,10 +5,10 @@ import { useParams } from "next/navigation"
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { api } from "@/lib/eden-client"
 import type { SettingsData } from "./_components/types"
 
 import { ProfileSection } from "./_components/profile-section"
+import { WhiteLabelSection } from "./_components/white-label-section"
 import { HonorSection } from "./_components/honor-section"
 import { PreferencesSection } from "./_components/preferences-section"
 
@@ -22,11 +22,27 @@ export default function SettingsPage() {
   const fetchSettings = React.useCallback(() => {
     if (!slug) return
     setLoading(true)
-    api.api
-      .orgs({ slug })
-      .settings.get()
-      .then(({ data: res }) => {
-        if (res?.success) setData(res.data as unknown as SettingsData)
+    fetch(
+      `${
+        process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8000"
+      }/api/orgs/${slug}/settings`,
+      { credentials: "include" }
+    )
+      .then((r) => r.json())
+      .then((res: any) => {
+        if (res?.success) {
+          const settingsData = res.data as unknown as SettingsData
+          setData(settingsData)
+          // Cache white-label logos for sidebar use
+          if (typeof window !== "undefined") {
+            try {
+              sessionStorage.setItem(
+                "kreatur-white-label",
+                JSON.stringify(settingsData.whiteLabel)
+              )
+            } catch {}
+          }
+        }
       })
       .finally(() => setLoading(false))
   }, [slug])
@@ -69,6 +85,12 @@ export default function SettingsPage() {
         <>
           <ProfileSection
             workspace={data.workspace}
+            slug={slug}
+            onUpdated={fetchSettings}
+          />
+
+          <WhiteLabelSection
+            whiteLabel={data.whiteLabel}
             slug={slug}
             onUpdated={fetchSettings}
           />

@@ -5,6 +5,12 @@ export interface WorkspaceData {
   logo: string | null
 }
 
+export interface WhiteLabelData {
+  logoDark: string | null
+  logoLight: string | null
+  customDomain: string | null
+}
+
 export interface PayoutRulesData {
   defaultHonor: number
   minPayout: number
@@ -19,6 +25,7 @@ export interface PreferencesData {
 
 export interface SettingsData {
   workspace: WorkspaceData
+  whiteLabel: WhiteLabelData
   payoutRules: PayoutRulesData
   preferences: PreferencesData
 }

@@ -34,7 +34,7 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 backend/drizzle/meta/
 
 # Uploaded files (local)
-backend/storage/
+storage/
 
 # Finder (MacOS) folder config
 .DS_Store

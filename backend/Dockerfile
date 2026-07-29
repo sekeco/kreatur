@@ -35,7 +35,7 @@ COPY --from=build /app/backend/dist ./dist
 COPY --from=build /app/backend/zenstack ./backend/zenstack
 
 # Create storage directory for uploads
-RUN mkdir -p storage/uploads
+RUN mkdir -p storage
 
 EXPOSE 8000
 

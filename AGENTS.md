@@ -240,21 +240,23 @@ REVISION_REQUESTED → APPROVED → PUBLISHED`. Each status transition records
    payout threshold). Contributors can request payouts on eligible articles.
    Finance/Admin verifies and marks as `PAID` with proof of transfer.
 6. **File Uploads:** Attachments (images, screenshots) stored on local filesystem
-   under `backend/storage/uploads/`, served via `GET /uploads/*`.
+   under `storage/`, served via `GET /storage/*`.
 
 ### Key Modules (Backend)
 
-| Module      | Path                               | Purpose                                   |
-| ----------- | ---------------------------------- | ----------------------------------------- |
-| Articles    | `backend/src/modules/articles/`    | CRUD + workflow status + events           |
-| Categories  | `backend/src/modules/categories/`  | Article categories per workspace          |
-| WordPress   | `backend/src/modules/wordpress/`   | WP REST API connection + publish          |
-| Connections | `backend/src/modules/connections/` | Workspace connection management           |
-| Payouts     | `backend/src/modules/payouts/`     | Honor rules + payout requests             |
-| Members     | `backend/src/modules/members/`     | Team invitation + role management         |
-| Dashboard   | `backend/src/modules/dashboard/`   | Aggregated stats + activity feed          |
-| Settings    | `backend/src/modules/settings/`    | Workspace profile, preferences, AI toggle |
-| Reviews     | `backend/src/modules/reviews/`     | Article review (score, notes, decision)   |
+| Module      | Path                               | Purpose                                     |
+| ----------- | ---------------------------------- | ------------------------------------------- |
+| Articles    | `backend/src/modules/articles/`    | CRUD + workflow status + events             |
+| Categories  | `backend/src/modules/categories/`  | Article categories per workspace            |
+| WordPress   | `backend/src/modules/wordpress/`   | WP REST API connection + publish            |
+| Connections | `backend/src/modules/connections/` | Workspace connection management             |
+| Payouts     | `backend/src/modules/payouts/`     | Honor rules + payout requests               |
+| Members     | `backend/src/modules/members/`     | Team invitation + role management           |
+| Dashboard   | `backend/src/modules/dashboard/`   | Aggregated stats + activity feed            |
+| Settings    | `backend/src/modules/settings/`    | Workspace profile, white-label, preferences |
+| Reviews     | `backend/src/modules/reviews/`     | Article review (score, notes, decision)     |
+| Profile     | `backend/src/modules/profile/`     | User profile, avatar, 2FA, sessions         |
+| Upload      | `backend/src/modules/upload/`      | File upload (avatar, logo images)           |
 
 ## Security & Compliance
 
@@ -308,27 +310,27 @@ Heed deprecation notices.
 
 ### Environment Variables
 
-| Variable                  | Default                 | Scope    | Purpose                             |
-| ------------------------- | ----------------------- | -------- | ----------------------------------- |
-| `DATABASE_URL`            | —                       | Backend  | PostgreSQL connection string        |
-| `BETTER_AUTH_URL`         | `http://localhost:8000` | Backend  | Auth callback base URL              |
-| `BETTER_AUTH_SECRET`      | —                       | Backend  | Auth signing secret (required)      |
-| `FRONTEND_URL`            | `http://localhost:3000` | Backend  | CORS origin + email link base       |
-| `NEXT_PUBLIC_BACKEND_URL` | `http://localhost:8000` | Frontend | Backend API endpoint                |
-| `PORT`                    | `8000` / `3000`         | Both     | Server listen port                  |
-| `UPLOAD_DIR`              | `./storage/uploads`     | Backend  | File upload storage path            |
-| `NODE_ENV`                | —                       | Both     | `production` enables secure cookies |
-| `GOOGLE_CLIENT_ID`        | —                       | Backend  | Google OAuth client ID              |
-| `GOOGLE_CLIENT_SECRET`    | —                       | Backend  | Google OAuth client secret          |
-| `GITHUB_CLIENT_ID`        | —                       | Backend  | GitHub OAuth client ID              |
-| `GITHUB_CLIENT_SECRET`    | —                       | Backend  | GitHub OAuth client secret          |
-| `SMTP_HOST`               | —                       | Backend  | SMTP server host for email          |
-| `SMTP_PORT`               | `587`                   | Backend  | SMTP server port                    |
-| `SMTP_USER`               | —                       | Backend  | SMTP username                       |
-| `SMTP_PASS`               | —                       | Backend  | SMTP password                       |
-| `SMTP_FROM`               | —                       | Backend  | Email sender address                |
-| `OPENCODE_API_URL`        | —                       | Backend  | AI suggestions API endpoint         |
-| `OPENCODE_API_KEY`        | —                       | Backend  | AI suggestions API key              |
+| Variable                  | Default                 | Scope    | Purpose                                                              |
+| ------------------------- | ----------------------- | -------- | -------------------------------------------------------------------- |
+| `DATABASE_URL`            | —                       | Backend  | PostgreSQL connection string                                         |
+| `BETTER_AUTH_URL`         | `http://localhost:8000` | Backend  | Auth callback base URL                                               |
+| `BETTER_AUTH_SECRET`      | —                       | Backend  | Auth signing secret (required)                                       |
+| `FRONTEND_URL`            | `http://localhost:3000` | Backend  | CORS origin + email link base                                        |
+| `NEXT_PUBLIC_BACKEND_URL` | `http://localhost:8000` | Frontend | Backend API endpoint                                                 |
+| `PORT`                    | `8000` / `3000`         | Both     | Server listen port                                                   |
+| `UPLOAD_DIR`              | `../storage`            | Backend  | File upload path: relative ke CWD (backend/) atau absolute di Docker |
+| `NODE_ENV`                | —                       | Both     | `production` enables secure cookies                                  |
+| `GOOGLE_CLIENT_ID`        | —                       | Backend  | Google OAuth client ID                                               |
+| `GOOGLE_CLIENT_SECRET`    | —                       | Backend  | Google OAuth client secret                                           |
+| `GITHUB_CLIENT_ID`        | —                       | Backend  | GitHub OAuth client ID                                               |
+| `GITHUB_CLIENT_SECRET`    | —                       | Backend  | GitHub OAuth client secret                                           |
+| `SMTP_HOST`               | —                       | Backend  | SMTP server host for email                                           |
+| `SMTP_PORT`               | `587`                   | Backend  | SMTP server port                                                     |
+| `SMTP_USER`               | —                       | Backend  | SMTP username                                                        |
+| `SMTP_PASS`               | —                       | Backend  | SMTP password                                                        |
+| `SMTP_FROM`               | —                       | Backend  | Email sender address                                                 |
+| `OPENCODE_API_URL`        | —                       | Backend  | AI suggestions API endpoint                                          |
+| `OPENCODE_API_KEY`        | —                       | Backend  | AI suggestions API key                                               |
 
 ### Feature Flags
 
@@ -339,13 +341,21 @@ Heed deprecation notices.
 - `organization.organizationLimit: 1` — adjust per plan (Free=1, Studio=3).
 - `session.expiresIn` / `updateAge` — tune session duration and rotation.
 - AI suggestions toggle per workspace in Settings (default: enabled).
+- White-label logos disimpan di `workspace_preferences` table
+  (`logo_dark`, `logo_light`, `custom_domain`), tanpa migrasi schema Better Auth.
+- Custom domain disimpan di `workspace_preferences.custom_domain`, resolusi
+  via endpoint `/api/orgs/by-domain/:domain`.
 
 ### Plugin Points
 
-- **Better Auth plugins:** Already using `organization` and `apiKey`. Custom
+- **Better Auth plugins:** Already using `organization` and `twoFactor`. Custom
   roles (`owner`, `editor`, `reviewer`, `contributor`, `finance`) configured via
-  Dynamic Access Control. The `twoFactor` plugin is listed in skills-lock but
-  not yet wired.
+  Dynamic Access Control.
+- **White-label metadata:** Logo dark/light dan custom domain disimpan dalam
+  `workspace_preferences` table (`logo_dark`, `logo_light`, `custom_domain`) —
+  kolom terpisah, bukan JSON metadata.
+- **File upload:** Images (avatar, logo) disimpan di `storage/` (root project),
+  diserve via Nginx `/storage/` atau langsung dari backend.
 - **shadcn registry:** Custom registries configured in `components.json`.
 - **Elysia routers:** New modules follow the pattern in `backend/src/modules/`:
   create a folder, export an Elysia router, mount in `backend/src/index.ts`.

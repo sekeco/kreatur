@@ -22,6 +22,8 @@
 | Fitur                     | Deskripsi                                                                 |
 | ------------------------- | ------------------------------------------------------------------------- |
 | **Multi-Tenant**          | Setiap organisasi punya ruang kerja sendiri, data terisolasi              |
+| **White-label**           | Logo dark/light mode, domain kustom per workspace                         |
+| **Foto Profil**           | Unggah avatar pengguna (file upload + URL)                                |
 | **Artikel CRUD**          | Rich-text editor (TipTap), auto-save, word count, quality checklist       |
 | **Workflow Editorial**    | Draf → Kirim Review → Setujui / Minta Revisi / Tolak → Terbit             |
 | **Review System**         | Skor ★ 1-5, catatan, riwayat review, keputusan (setujui/revisi/tolak)     |

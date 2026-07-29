@@ -45,12 +45,13 @@ services:
     environment:
       NODE_ENV: production
       PORT: 8000
+      UPLOAD_DIR: /app/storage
       DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-kreatur}
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?BETTER_AUTH_SECRET is required}
       BACKEND_URL: ${BACKEND_URL:-http://localhost}
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost}
     volumes:
-      - ./backend/storage/uploads:/app/storage/uploads
+      - ./storage:/app/storage
     depends_on:
       db:
         condition: service_healthy
@@ -88,6 +89,7 @@ services:
       - "${NGINX_PORT:-80}:80"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./storage:/app/storage
     depends_on:
       - backend
       - frontend

@@ -423,10 +423,11 @@ Settings memiliki sub-halaman terpisah (feature-based):
 - **`/orgs/[slug]/settings/honor`** — Aturan honor (nominal per artikel, threshold payout)
 - **`/orgs/[slug]/settings/review`** — Aturan review (default reviewer, default approve score)
 - **`/orgs/[slug]/settings/preferences`** — Preferensi workspace (zona waktu, bahasa, dll)
+- **White-label:** Logo dark/light mode, domain kustom (via organization.metadata JSON)
 
 ### 7.13 Profil Saya `/orgs/[slug]/profile`
 
-- **Informasi Akun:** Nama, Email
+- **Informasi Akun:** Nama, Email, **Foto Profil** (unggah file + URL)
 - **Preferensi Payout:** Bank, nomor rekening, nama pemilik rekening
 - **Keamanan:** Ganti password
 - **Two-Factor Authentication (2FA):** Setup TOTP authenticator

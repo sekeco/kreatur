@@ -132,6 +132,9 @@ model WorkspacePreference {
     defaultScoreForPublish Int?   @map('default_score_for_publish')
     defaultReviewerId    String?  @map('default_reviewer_id')
     publicJoinEnabled    Boolean  @default(true) @map('public_join_enabled')
+    logoDark             String?  @map('logo_dark')
+    logoLight            String?  @map('logo_light')
+    customDomain         String?  @map('custom_domain')
     metadata             String?
     createdAt            DateTime @default(now()) @map('created_at')
     updatedAt            DateTime @updatedAt @map('updated_at')

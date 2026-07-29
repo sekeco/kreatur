@@ -5,7 +5,6 @@ import { useParams } from "next/navigation"
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { api } from "@/lib/eden-client"
 import type { ProfileData } from "./_components/types"
 
 import { AccountInfoSection } from "./_components/account-info-section"
@@ -25,10 +24,14 @@ export default function ProfilePage() {
   const fetchProfile = React.useCallback(() => {
     if (!slug) return
     setLoading(true)
-    api.api
-      .orgs({ slug })
-      .profile.get()
-      .then(({ data: res }) => {
+    fetch(
+      `${
+        process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8000"
+      }/api/orgs/${slug}/profile`,
+      { credentials: "include" }
+    )
+      .then((r) => r.json())
+      .then((res: any) => {
         if (res?.success) setData(res.data as unknown as ProfileData)
       })
       .finally(() => setLoading(false))
